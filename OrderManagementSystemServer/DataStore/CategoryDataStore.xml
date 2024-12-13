@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfCategory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Category>
+    <Id>1</Id>
+    <Name>Beverages</Name>
+    <Description>Soft drinks, coffees, teas, beers, and ales</Description>
+    <Picture />
+  </Category>
+  <Category>
+    <Id>2</Id>
+    <Name>Condiments</Name>
+    <Description>Sweet and savory sauces, relishes, spreads, and seasonings</Description>
+    <Picture />
+  </Category>
+  <Category>
+    <Id>3</Id>
+    <Name>Confections</Name>
+    <Description>Desserts, candies, and sweet breads</Description>
+    <Picture />
+  </Category>
+  <Category>
+    <Id>4</Id>
+    <Name>Dairy Products</Name>
+    <Description>Cheeses</Description>
+    <Picture />
+  </Category>
+  <Category>
+    <Id>5</Id>
+    <Name>Grains/Cereals</Name>
+    <Description>Breads, crackers, pasta, and cereal</Description>
+    <Picture />
+  </Category>
+  <Category>
+    <Id>6</Id>
+    <Name>Meat/Poultry</Name>
+    <Description>Prepared meats</Description>
+    <Picture />
+  </Category>
+  <Category>
+    <Id>7</Id>
+    <Name>Produce</Name>
+    <Description>Dried fruit and bean curd</Description>
+    <Picture />
+  </Category>
+  <Category>
+    <Id>8</Id>
+    <Name>Seafood</Name>
+    <Description>Seaweed and fish</Description>
+    <Picture />
+  </Category>
+  <Category>
+    <Id>9</Id>
+    <Name>Pulses</Name>
+    <Description>Food to eat</Description>
+  </Category>
+  <Category>
+    <Id>10</Id>
+    <Name>vdf</Name>
+    <Description>fds</Description>
+  </Category>
+  <Category>
+    <Id>11</Id>
+    <Name>dsadsa</Name>
+    <Description>sdadas</Description>
+  </Category>
+  <Category>
+    <Id>12</Id>
+    <Name>a</Name>
+    <Description>as</Description>
+  </Category>
+</ArrayOfCategory>
