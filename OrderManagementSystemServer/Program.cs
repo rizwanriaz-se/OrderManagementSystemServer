@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using OrderManagementSystemServer.Cache.Models;
 using OrderManagementSystemServer;
+using System.Diagnostics;
 
 namespace OrderManagementSystem.Server
 {
@@ -81,22 +82,22 @@ namespace OrderManagementSystem.Server
     //    }
 
     //}
-    public class Request
-    {
-        public string Type { get; set; }
-        public string Data { get; set; }
-    }
-    public class Response
-    {
-        public string Type
-        {
-            get; set;
-        }
-        public string Data
-        {
-            get; set;
-        }
-    }
+    //public class Request
+    //{
+    //    public string Type { get; set; }
+    //    public string Data { get; set; }
+    //}
+    //public class Response
+    //{
+    //    public string Type
+    //    {
+    //        get; set;
+    //    }
+    //    public string Data
+    //    {
+    //        get; set;
+    //    }
+    //}
     public class Program
     {
         private static CacheManager _cacheManager;
@@ -104,8 +105,41 @@ namespace OrderManagementSystem.Server
         public static async Task Main(string[] args)
         {
             _cacheManager = CacheManager.Instance;
+
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+            Console.CancelKeyPress += OnCancelKeyPress;
+
             Console.WriteLine("Server starting...");
             await StartServer();
+            
+        }
+
+        private static void OnProcessExit(object? sender, EventArgs e)
+        {
+            try
+            {
+                _cacheManager.SaveData(false);
+                Console.WriteLine("Cache data saved successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving cache data: {ex.Message}");
+            }
+            
+        }
+
+        private static void OnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
+        {
+            try
+            {
+                _cacheManager.SaveData(false);
+                Console.WriteLine("Cache data saved successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving cache data: {ex.Message}");
+            }
+
         }
 
         private static async Task StartServer()
@@ -226,11 +260,13 @@ namespace OrderManagementSystem.Server
                 var requestObject = JsonSerializer.Deserialize<Classes.Request>(request);
                 Console.WriteLine($"Parsed request: {requestObject}");
 
+                Category categoryData = JsonSerializer.Deserialize<Category>(requestObject.Data.ToString());
                 // Example action (for debugging)
-                _cacheManager.AddCategory(new Category { Name = "Category 1", Description = "Category 1 Description" });
+                int? lastCategoryId = _cacheManager.GetAllCategories().Last().Id;
+                _cacheManager.AddCategory(new Category { Id=lastCategoryId+1, Name = categoryData.Name, Description = categoryData.Description, Picture=categoryData.Picture });
 
                 // Create a response object
-                var responseObject = new { Status = "Success", Message = "Processed Successfully" };
+                var responseObject = new Classes.Response { MessageAction = Enums.MessageAction.Add, MessageType = Enums.MessageType.Category, Data = requestObject.Data };
 
                 // Serialize response to JSON
                 return JsonSerializer.Serialize(responseObject);
