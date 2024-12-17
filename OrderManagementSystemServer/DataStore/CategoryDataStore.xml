@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfCategory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Category>
-    <Id>1</Id>
-    <Name>Beverages</Name>
-    <Description>Soft drinks, coffees, teas, beers, and ales</Description>
-    <Picture />
-  </Category>
-  <Category>
     <Id>2</Id>
     <Name>Condiments</Name>
     <Description>Sweet and savory sauces, relishes, spreads, and seasonings</Description>
@@ -39,7 +33,7 @@
   <Category>
     <Id>7</Id>
     <Name>Produce</Name>
-    <Description>Dried fruit and bean curd</Description>
+    <Description>Dried fruits and bean curd</Description>
     <Picture />
   </Category>
   <Category>
@@ -54,19 +48,18 @@
     <Description>Food to eat</Description>
   </Category>
   <Category>
-    <Id>10</Id>
-    <Name>vdf</Name>
-    <Description>fds</Description>
-  </Category>
-  <Category>
     <Id>11</Id>
     <Name>dsadsa</Name>
     <Description>sdadas</Description>
   </Category>
   <Category>
-    <Id>12</Id>
-    <Name>a</Name>
-    <Description>as</Description>
+    <Id>13</Id>
+    <Name>asdsda</Name>
+    <Description>asdsda</Description>
   </Category>
- 
+  <Category>
+    <Id>14</Id>
+    <Name>xzc</Name>
+    <Description>sad</Description>
+  </Category>
 </ArrayOfCategory>

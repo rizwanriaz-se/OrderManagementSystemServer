@@ -89,6 +89,13 @@ namespace OrderManagementSystemServer.Cache.Models
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is not Product other) return false;
+
+            return Id == other.Id && Name == other.Name && Description == other.Description && Category == other.Category && UnitsInStock == other.UnitsInStock && UnitPrice == other.UnitPrice;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)

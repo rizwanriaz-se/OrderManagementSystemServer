@@ -13,7 +13,7 @@ namespace OrderManagementSystemServer
             Category,
             Order,
             Product,
-            HeartBeat,
+            User,
             Error
         }
         public enum MessageAction
@@ -21,7 +21,7 @@ namespace OrderManagementSystemServer
             Add,
             Update,
             Delete,
-            HeartBeat,
+            Load,
             Error
 
         }
