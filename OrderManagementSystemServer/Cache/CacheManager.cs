@@ -89,12 +89,13 @@ namespace OrderManagementSystemServer.Cache
         {
             _AllCategories.Remove(category);
         }
-        public void UpdateCategory(Category category)
+        public void UpdateCategory(Category updatedCategory)
         {
-            var categoryToUpdate = _AllCategories.FirstOrDefault(c => c.Id == category.Id);
-            categoryToUpdate.Name = category.Name;
-            categoryToUpdate.Description = category.Description;
-            categoryToUpdate.Picture = category.Picture;
+            Category categoryToUpdate = GetAllCategories().FirstOrDefault(c => c.Id == updatedCategory.Id);
+
+            categoryToUpdate.Name = updatedCategory.Name;
+            categoryToUpdate.Description = updatedCategory.Description;
+            categoryToUpdate.Picture = updatedCategory.Picture;
 
             //MessageBox.Show("Category updated successfully");
         }
@@ -129,23 +130,24 @@ namespace OrderManagementSystemServer.Cache
 
 
             //order.Id = _AllOrders.Max(o => o.Id) + 1;
-            _AllOrders.Add(order);
+            _AllOrders.Add(orderToAdd);
             //return order;
         }
         public void UpdateOrder(Order updatedOrder)
         {
             // Retrieve the existing order with the same ID
-            var existingOrder = _AllOrders.FirstOrDefault(o => o.Id == updatedOrder.Id);
+            //var existingOrder = _AllOrders.FirstOrDefault(o => o.Id == updatedOrder.Id);
+            Order orderToUpdate = GetAllOrders().FirstOrDefault(o => o.Id == updatedOrder.Id);
 
-            if (existingOrder != null)
+            if (orderToUpdate != null)
             {
                 // Update the existing order's properties
-                existingOrder.User = updatedOrder.User;
-                existingOrder.OrderDate = updatedOrder.OrderDate;
-                existingOrder.Status = updatedOrder.Status;
-                existingOrder.ShippedDate = updatedOrder.ShippedDate;
-                existingOrder.ShippingAddress = updatedOrder.ShippingAddress;
-                existingOrder.OrderDetails = updatedOrder.OrderDetails;
+                orderToUpdate.User = updatedOrder.User;
+                orderToUpdate.OrderDate = updatedOrder.OrderDate;
+                orderToUpdate.Status = updatedOrder.Status;
+                orderToUpdate.ShippedDate = updatedOrder.ShippedDate;
+                orderToUpdate.ShippingAddress = updatedOrder.ShippingAddress;
+                orderToUpdate.OrderDetails = updatedOrder.OrderDetails;
 
                 //MessageBox.Show($"Order Updated: {existingOrder.Id}, {existingOrder.User.Name}, {existingOrder.OrderDate}, " +
                 //$"{existingOrder.Products.Count} products, {existingOrder.ShippedDate}, {existingOrder.ShippingAddress}");
@@ -176,19 +178,30 @@ namespace OrderManagementSystemServer.Cache
         }
         public void AddProduct(Product product)
         {
-            _AllProducts.Add(product);
-        }
-        public void UpdateProduct(Product product)
-        {
-            var existingProduct = _AllProducts.FirstOrDefault(p => p.Id == product.Id);
-            if (existingProduct != null)
+            var lastProductId = GetAllProducts().LastOrDefault()?.Id ?? 0;
+
+            Product productToAdd = new Product
             {
-                existingProduct.Name = product.Name;
-                existingProduct.Description = product.Description;
-                existingProduct.Category = product.Category;
-                existingProduct.Picture = product.Picture;
-                existingProduct.UnitPrice = product.UnitPrice;
-                existingProduct.UnitsInStock = product.UnitsInStock;
+                Id = lastProductId + 1,
+                Name = product.Name,
+                UnitPrice = Convert.ToDecimal(product.UnitPrice),
+                UnitsInStock = Convert.ToInt32(product.UnitsInStock),
+                Description = product.Description,
+                Category = product.Category
+            };
+            _AllProducts.Add(productToAdd);
+        }
+        public void UpdateProduct(Product updatedProduct)
+        {
+            Product productToUpdate = GetAllProducts().FirstOrDefault(p => p.Id == updatedProduct.Id);
+            if (productToUpdate != null)
+            {
+                productToUpdate.Name = updatedProduct.Name;
+                productToUpdate.Description = updatedProduct.Description;
+                productToUpdate.Category = updatedProduct.Category;
+                productToUpdate.Picture = updatedProduct.Picture;
+                productToUpdate.UnitPrice = updatedProduct.UnitPrice;
+                productToUpdate.UnitsInStock = updatedProduct.UnitsInStock;
 
                 //MessageBox.Show($"Product Updated: {existingProduct.Id}, {existingProduct.Name}, {existingProduct.Description}, {existingProduct.Category.Name}, {existingProduct.UnitPrice}, {existingProduct.UnitsInStock}");
             }
@@ -211,7 +224,20 @@ namespace OrderManagementSystemServer.Cache
 
         public void AddUser(User user)
         {
-            _AllUsers.Add(user);
+            var lastUserId = GetAllUsers().LastOrDefault()?.Id ?? 0;
+
+            User userToAdd = new User
+            {
+                Id = lastUserId + 1,
+                Name = user.Name,
+                Email = user.Email,
+                Phone = user.Phone,
+                Password = user.Password,
+                IsAdmin = user.IsAdmin
+
+            };
+
+            _AllUsers.Add(userToAdd);
             SaveData(true);
         }
 
@@ -224,16 +250,16 @@ namespace OrderManagementSystemServer.Cache
         {
             return _AllUsers.FirstOrDefault(u => u.Id == id);
         }
-        public void UpdateUser(User user)
+        public void UpdateUser(User updatedUser)
         {
-            var existingUser = _AllUsers.FirstOrDefault(u => u.Id == user.Id);
-            if (existingUser != null)
+            User userToUpdate = GetAllUsers().FirstOrDefault(u => u.Id == updatedUser.Id);
+            if (userToUpdate != null)
             {
-                existingUser.Name = user.Name;
-                existingUser.Email = user.Email;
-                existingUser.Phone = user.Phone;
-                existingUser.Password = user.Password;
-                existingUser.IsAdmin = user.IsAdmin;
+                userToUpdate.Name = updatedUser.Name;
+                userToUpdate.Email = updatedUser.Email;
+                userToUpdate.Phone = updatedUser.Phone;
+                userToUpdate.Password = updatedUser.Password;
+                userToUpdate.IsAdmin = updatedUser.IsAdmin;
 
                 //MessageBox.Show($"Product Updated: {existingProduct.Id}, {existingProduct.Name}, {existingProduct.Description}, {existingProduct.Category.Name}, {existingProduct.UnitPrice}, {existingProduct.UnitsInStock}");
             }

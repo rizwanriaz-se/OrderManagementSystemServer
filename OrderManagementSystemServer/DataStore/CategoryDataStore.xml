@@ -77,4 +77,9 @@
     <Name>t</Name>
     <Description>t</Description>
   </Category>
+  <Category>
+    <Id>18</Id>
+    <Name>fdsasd</Name>
+    <Description>asdasd</Description>
+  </Category>
 </ArrayOfCategory>

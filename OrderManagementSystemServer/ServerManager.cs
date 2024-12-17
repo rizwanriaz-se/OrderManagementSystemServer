@@ -148,7 +148,8 @@ namespace OrderManagementSystemServer
                 Console.WriteLine($"Parsed request: {requestObject}");
 
                 Classes.Response responseObject;
-                MessageProcessor.ReceiveMessage(requestObject);
+                responseObject = MessageProcessor.ReceiveMessage(requestObject);
+                return JsonSerializer.Serialize(responseObject);
 
                 //switch (requestObject.MessageAction)
                 //{

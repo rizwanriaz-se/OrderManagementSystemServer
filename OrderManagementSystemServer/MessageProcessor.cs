@@ -17,26 +17,28 @@ namespace OrderManagementSystemServer
     {
         private static CacheManager _cacheManager = CacheManager.Instance;
 
-        public static void ReceiveMessage(Classes.Request request)
+        public static Classes.Response ReceiveMessage(Classes.Request request)
         {
             switch (request.MessageAction)
             {
                 case Enums.MessageAction.Add:
-                    Add(request);
-                    break;
+                    return Add(request);
+                    
                 case Enums.MessageAction.Update:
-                    Update(request);
-                    break;
+                    return Update(request);
+                    
                 case Enums.MessageAction.Delete:
-                    Delete(request);
-                    break;
+                    return Delete(request);
+                    
                 case Enums.MessageAction.Load:
-                    Load(request);
-                    break;
+                    return Load(request);
+                    
                 case Enums.MessageAction.Error:
-                    break;
+                    return Load(request);
+                    
                 default:
-                    break;
+                    return Load(request);
+                    
             }
         }
 
@@ -47,47 +49,19 @@ namespace OrderManagementSystemServer
             {
                 case Enums.MessageType.Category:
                     var categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
+
                     if (categoryData == null)
                     {
                         throw new JsonException("Category data is null");
                     }
-                    //var lastCategoryId = _cacheManager.GetAllCategories().LastOrDefault()?.Id ?? 0;
 
                     _cacheManager.AddCategory(categoryData);
-                    //if (categoryData == null)
-                    //{
-                    //    throw new JsonException("Category data is null");
-                    //}
-                    //var lastCategoryId = _cacheManager.GetAllCategories().LastOrDefault()?.Id ?? 0;
-
-                    //_cacheManager.AddCategory(new Category { Id = lastCategoryId + 1, Name = categoryData.Name, Description = categoryData.Description, Picture = categoryData.Picture });
+                    
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Add, MessageType = Enums.MessageType.Category, Data = request.Data };
 
                 case Enums.MessageType.Order:
-                    //var orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
-                    //if (orderData == null)
-                    //{
-                    //    throw new JsonException("Order data is null");
-                    //}
-                    //var lastOrderId = _cacheManager.GetAllOrders().LastOrDefault()?.Id ?? 0;
-
-                    //_cacheManager.AddOrder(new Order
-                    //{
-                    //    Id = lastOrderId + 1,
-                    //    User = orderData.User,
-                    //    OrderDate = DateTime.Now,
-                    //    Status = OrderStatus.Pending,
-                    //    OrderDetails = orderData.OrderDetails,
-                    //    //OrderDetails = ProductRows.Select(row => new OrderDetail
-                    //    //{
-                    //    //    Product = GUIHandler.GetInstance().CacheManager.GetProductByName(row),
-                    //    //    Quantity = row.Quantity
-                    //    //}).ToList(),
-
-                    //    ShippedDate = orderData.ShippedDate,
-                    //    ShippingAddress = orderData.ShippingAddress
-                    //});
+                    
                     var orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
                     if (orderData == null)
                     {
@@ -99,22 +73,16 @@ namespace OrderManagementSystemServer
                     { MessageAction = Enums.MessageAction.Add, MessageType = Enums.MessageType.Order, Data = request.Data };
 
                 case Enums.MessageType.Product:
+                    
                     var productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
+
                     if (productData == null)
                     {
                         throw new JsonException("Product data is null");
                     }
-                    var lastProductId = _cacheManager.GetAllProducts().LastOrDefault()?.Id ?? 0;
 
-                    _cacheManager.AddProduct(new Product
-                    {
-                        Id = lastProductId + 1,
-                        Name = productData.Name,
-                        UnitPrice = Convert.ToDecimal(productData.UnitPrice),
-                        UnitsInStock = Convert.ToInt32(productData.UnitsInStock),
-                        Description = productData.Description,
-                        Category = productData.Category
-                    });
+                    _cacheManager.AddProduct(productData);
+
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Add, MessageType = Enums.MessageType.Product, Data = request.Data };
 
@@ -124,18 +92,9 @@ namespace OrderManagementSystemServer
                     {
                         throw new JsonException("User data is null");
                     }
-                    var lastUserId = _cacheManager.GetAllUsers().LastOrDefault()?.Id ?? 0;
 
-                    _cacheManager.AddUser(new User
-                    {
-                        Id = lastUserId + 1,
-                        Name = userData.Name,
-                        Email = userData.Email,
-                        Phone = userData.Phone,
-                        Password = userData.Password,
-                        IsAdmin = userData.IsAdmin
+                    _cacheManager.AddUser(userData);
 
-                    });
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Add, MessageType = Enums.MessageType.User, Data = request.Data };
                     
@@ -155,21 +114,14 @@ namespace OrderManagementSystemServer
             {
                 case Enums.MessageType.Category:
                     var categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
+                    
                     if (categoryData == null)
                     {
                         throw new JsonException("Category data is null");
                     }
-                    Category categoryToUpdate = _cacheManager.GetAllCategories().FirstOrDefault(c => c.Id == categoryData.Id);
-                    if (categoryToUpdate == null)
-                    {
-                        throw new JsonException("Category not found");
-                    }
-
-                    categoryToUpdate.Name = categoryData.Name;
-                    categoryToUpdate.Description = categoryData.Description;
-                    categoryToUpdate.Picture = categoryData.Picture;
-                    _cacheManager.UpdateCategory(categoryToUpdate);
                     
+                    _cacheManager.UpdateCategory(categoryData);
+
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Update, MessageType = Enums.MessageType.Category, Data = request.Data };
 
@@ -179,20 +131,8 @@ namespace OrderManagementSystemServer
                     {
                         throw new JsonException("Order data is null");
                     }
-                    Order orderToUpdate = _cacheManager.GetAllOrders().FirstOrDefault(o => o.Id == orderData.Id);
-                    if (orderToUpdate == null)
-                    {
-                        throw new JsonException("Product not found");
-                    }
-
-                    orderToUpdate.Status = orderData.Status;
-                    orderToUpdate.User = orderData.User;
-                    orderToUpdate.ShippedDate = orderData.ShippedDate;
-                    orderToUpdate.OrderDetails = orderData.OrderDetails;
-                    orderToUpdate.Id = orderData.Id;
-                    orderToUpdate.ShippingAddress = orderData.ShippingAddress;
-
-                    _cacheManager.UpdateOrder(orderToUpdate);
+                    
+                    _cacheManager.UpdateOrder(orderData);
 
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Update, MessageType = Enums.MessageType.Order, Data = request.Data };
@@ -203,20 +143,8 @@ namespace OrderManagementSystemServer
                     {
                         throw new JsonException("Product data is null");
                     }
-                    Product productToUpdate = _cacheManager.GetAllProducts().FirstOrDefault(p => p.Id == productData.Id);
-                    if (productToUpdate == null)
-                    {
-                        throw new JsonException("Product not found");
-                    }
 
-                    productToUpdate.Name = productData.Name;
-                    productToUpdate.Description = productData.Description;
-                    productToUpdate.Picture = productData.Picture;
-                    productToUpdate.UnitPrice = productData.UnitPrice;
-                    productToUpdate.UnitsInStock = productData.UnitsInStock;
-                    productToUpdate.Category = productData.Category;
-
-                    _cacheManager.UpdateProduct(productToUpdate);
+                    _cacheManager.UpdateProduct(productData);
 
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Update, MessageType = Enums.MessageType.Product, Data = request.Data };
@@ -227,19 +155,8 @@ namespace OrderManagementSystemServer
                     {
                         throw new JsonException("User data is null");
                     }
-                    User userToUpdate = _cacheManager.GetAllUsers().FirstOrDefault(u => u.Id == userData.Id);
-                    if (userToUpdate == null)
-                    {
-                        throw new JsonException("User not found");
-                    }
-                    userToUpdate.Name = userData.Name;
-                    userToUpdate.Email = userData.Email;
-                    userToUpdate.Phone = userData.Phone;
-                    userToUpdate.Password = userData.Password;
-                    userToUpdate.IsAdmin = userData.IsAdmin;
-                    //userToUpdate.ShippingAddress = userData.ShippingAddress;
-
-                    _cacheManager.UpdateUser(userToUpdate);
+                    
+                    _cacheManager.UpdateUser(userData);
 
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Update, MessageType = Enums.MessageType.User, Data = request.Data };
@@ -261,10 +178,8 @@ namespace OrderManagementSystemServer
                 case Enums.MessageType.Category:
                     Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString());
 
-                    
                     _cacheManager.DeleteCategory(categoryData);
                     
-
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Delete, MessageType = Enums.MessageType.Category, Data = request.Data };
 
@@ -280,13 +195,7 @@ namespace OrderManagementSystemServer
                 case Enums.MessageType.Product:
                     Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString());
 
-                    //var categoryToDelete = _cacheManager.GetAllCategories().FirstOrDefault(c => c.Id == categoryData.Id);
-                    //if (categoryToDelete == null)
-                    //{
-                    //    throw new JsonException("Category not found");
-                    //}
                     _cacheManager.DeleteProduct(productData);
-                    //_cacheManager.DeleteCategory(categoryToDelete);
 
                     return new Classes.Response
                     { MessageAction = Enums.MessageAction.Delete, MessageType = Enums.MessageType.Product, Data = request.Data };
