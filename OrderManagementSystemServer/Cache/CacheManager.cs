@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using OrderManagementSystemServer.Utils;
 using OrderManagementSystemServer.Cache.Models;
+using static OrderManagementSystemServer.Cache.Models.Order;
 
 namespace OrderManagementSystemServer.Cache
 {
@@ -79,7 +80,10 @@ namespace OrderManagementSystemServer.Cache
         }
         public void AddCategory(Category category)
         {
-            _AllCategories.Add(category);
+            var lastCategoryId = GetAllCategories().LastOrDefault()?.Id ?? 0;
+            Category categoryToAdd = new Category { Id = lastCategoryId + 1, Name = category.Name, Description = category.Description, Picture = category.Picture };
+
+            _AllCategories.Add(categoryToAdd);
         }
         public void DeleteCategory(Category category)
         {
@@ -104,6 +108,26 @@ namespace OrderManagementSystemServer.Cache
         }
         public void AddOrder(Order order)
         {
+            var lastOrderId = GetAllOrders().LastOrDefault()?.Id ?? 0;
+
+            Order orderToAdd = new Order
+            {
+                Id = lastOrderId + 1,
+                User = order.User,
+                OrderDate = DateTime.Now,
+                Status = OrderStatus.Pending,
+                OrderDetails = order.OrderDetails,
+                //OrderDetails = ProductRows.Select(row => new OrderDetail
+                //{
+                //    Product = GUIHandler.GetInstance().CacheManager.GetProductByName(row),
+                //    Quantity = row.Quantity
+                //}).ToList(),
+
+                ShippedDate = order.ShippedDate,
+                ShippingAddress = order.ShippingAddress
+            };
+
+
             //order.Id = _AllOrders.Max(o => o.Id) + 1;
             _AllOrders.Add(order);
             //return order;
