@@ -223,14 +223,4 @@
     <UnitPrice>2</UnitPrice>
     <UnitsInStock>23</UnitsInStock>
   </Product>
-  <Product>
-    <Id>17</Id>
-    <UnitPrice>0</UnitPrice>
-    <UnitsInStock>0</UnitsInStock>
-  </Product>
-  <Product>
-    <Id>18</Id>
-    <UnitPrice>0</UnitPrice>
-    <UnitsInStock>0</UnitsInStock>
-  </Product>
 </ArrayOfProduct>

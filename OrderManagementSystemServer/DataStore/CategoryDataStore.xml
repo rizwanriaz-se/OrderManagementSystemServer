@@ -58,14 +58,9 @@
     <Description>asdsda</Description>
   </Category>
   <Category>
-    <Id>14</Id>
-    <Name>xzc</Name>
-    <Description>sad</Description>
-  </Category>
-  <Category>
     <Id>15</Id>
-    <Name>test</Name>
-    <Description>test</Description>
+    <Name>testing</Name>
+    <Description>testing</Description>
   </Category>
   <Category>
     <Id>16</Id>
@@ -81,5 +76,10 @@
     <Id>18</Id>
     <Name>fdsasd</Name>
     <Description>asdasd</Description>
+  </Category>
+  <Category>
+    <Id>19</Id>
+    <Name>dsa</Name>
+    <Description>asd</Description>
   </Category>
 </ArrayOfCategory>

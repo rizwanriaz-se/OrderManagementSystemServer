@@ -147,8 +147,29 @@ namespace OrderManagementSystemServer
                 }
                 Console.WriteLine($"Parsed request: {requestObject}");
 
-                Classes.Response responseObject;
-                responseObject = MessageProcessor.ReceiveMessage(requestObject);
+                Classes.Response responseObject = null;
+
+                switch (requestObject.MessageType)
+                {
+                    case Enums.MessageType.Category:
+                        responseObject = MessageProcessor.ProcessCategoryMessage(requestObject);
+                        break;
+                    case Enums.MessageType.Order:
+                        responseObject = MessageProcessor.ProcessOrderMessage(requestObject);
+                        break;
+                    case Enums.MessageType.Product:
+                        responseObject = MessageProcessor.ProcessProductMessage(requestObject);
+                        break;
+                    case Enums.MessageType.User:
+                        responseObject = MessageProcessor.ProcessUserMessage(requestObject);
+                        break;
+                    case Enums.MessageType.Error:
+                        break;
+                    default:
+                        break;
+                }
+
+                //Classes.Response responseObject = MessageProcessor.ProcessReceivedMessage(requestObject);
                 return JsonSerializer.Serialize(responseObject);
 
                 //switch (requestObject.MessageAction)

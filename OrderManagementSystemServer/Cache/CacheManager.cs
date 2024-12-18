@@ -2,6 +2,7 @@
 using OrderManagementSystemServer.Utils;
 using OrderManagementSystemServer.Cache.Models;
 using static OrderManagementSystemServer.Cache.Models.Order;
+using System.Runtime.CompilerServices;
 
 namespace OrderManagementSystemServer.Cache
 {
@@ -78,18 +79,51 @@ namespace OrderManagementSystemServer.Cache
         {
             return _AllCategories;
         }
-        public void AddCategory(Category category)
+        //public Category AddCategory(Category category, ref string stErrorMsg)
+        //{
+        //    if (category is null)
+        //    {
+        //        stErrorMsg = "Couldn't add the Category";
+        //        return null;
+        //    }
+
+        //    int lastCategoryId = GetAllCategories().LastOrDefault()?.Id ?? 0;
+        //    Category categoryToAdd = new Category { Id = lastCategoryId + 1, Name = category.Name, Description = category.Description, Picture = category.Picture };
+
+        //    _AllCategories.Add(categoryToAdd);
+        //    return categoryToAdd;
+        //}
+
+        public Category AddCategory(Category category)
         {
-            var lastCategoryId = GetAllCategories().LastOrDefault()?.Id ?? 0;
+            if (category is null)
+            {
+                //stErrorMsg = "Couldn't add the Category";
+                return null;
+            }
+
+            int lastCategoryId = GetAllCategories().LastOrDefault()?.Id ?? 0;
             Category categoryToAdd = new Category { Id = lastCategoryId + 1, Name = category.Name, Description = category.Description, Picture = category.Picture };
 
             _AllCategories.Add(categoryToAdd);
+            return categoryToAdd;
         }
-        public void DeleteCategory(Category category)
+
+
+        public Category DeleteCategory(Category category)
         {
+
             _AllCategories.Remove(category);
+            return category;
+
         }
-        public void UpdateCategory(Category updatedCategory)
+        //public void DeleteCategory(Category category, ref string stErrorMsg)
+        //{
+
+        //    _AllCategories.Remove(category);
+
+        //}
+        public Category UpdateCategory(Category updatedCategory)
         {
             Category categoryToUpdate = GetAllCategories().FirstOrDefault(c => c.Id == updatedCategory.Id);
 
@@ -97,6 +131,7 @@ namespace OrderManagementSystemServer.Cache
             categoryToUpdate.Description = updatedCategory.Description;
             categoryToUpdate.Picture = updatedCategory.Picture;
 
+            return categoryToUpdate;
             //MessageBox.Show("Category updated successfully");
         }
         public ObservableCollection<Order> GetAllOrders()
@@ -107,7 +142,7 @@ namespace OrderManagementSystemServer.Cache
         {
             return _AllOrders.FirstOrDefault(o => o.Id == id);
         }
-        public void AddOrder(Order order)
+        public Order AddOrder(Order order)
         {
             var lastOrderId = GetAllOrders().LastOrDefault()?.Id ?? 0;
 
@@ -131,9 +166,10 @@ namespace OrderManagementSystemServer.Cache
 
             //order.Id = _AllOrders.Max(o => o.Id) + 1;
             _AllOrders.Add(orderToAdd);
+            return orderToAdd;
             //return order;
         }
-        public void UpdateOrder(Order updatedOrder)
+        public Order UpdateOrder(Order updatedOrder)
         {
             // Retrieve the existing order with the same ID
             //var existingOrder = _AllOrders.FirstOrDefault(o => o.Id == updatedOrder.Id);
@@ -151,15 +187,18 @@ namespace OrderManagementSystemServer.Cache
 
                 //MessageBox.Show($"Order Updated: {existingOrder.Id}, {existingOrder.User.Name}, {existingOrder.OrderDate}, " +
                 //$"{existingOrder.Products.Count} products, {existingOrder.ShippedDate}, {existingOrder.ShippingAddress}");
+
             }
             else
             {
                 //MessageBox.Show("Order not found.");
             }
+            return orderToUpdate;
         }
-        public void DeleteOrder(Order order)
+        public Order DeleteOrder(Order order)
         {
             _AllOrders.Remove(order);
+            return order;
         }
         public ObservableCollection<Product> GetAllProducts()
         {
@@ -172,11 +211,9 @@ namespace OrderManagementSystemServer.Cache
         }
         public Product GetProductByName(OrderDetail orderDetail)
         {
-
-
             return _AllProducts.FirstOrDefault(p => p.Name == orderDetail.Product.Name);
         }
-        public void AddProduct(Product product)
+        public Product AddProduct(Product product)
         {
             var lastProductId = GetAllProducts().LastOrDefault()?.Id ?? 0;
 
@@ -190,8 +227,9 @@ namespace OrderManagementSystemServer.Cache
                 Category = product.Category
             };
             _AllProducts.Add(productToAdd);
+            return productToAdd;
         }
-        public void UpdateProduct(Product updatedProduct)
+        public Product UpdateProduct(Product updatedProduct)
         {
             Product productToUpdate = GetAllProducts().FirstOrDefault(p => p.Id == updatedProduct.Id);
             if (productToUpdate != null)
@@ -205,10 +243,12 @@ namespace OrderManagementSystemServer.Cache
 
                 //MessageBox.Show($"Product Updated: {existingProduct.Id}, {existingProduct.Name}, {existingProduct.Description}, {existingProduct.Category.Name}, {existingProduct.UnitPrice}, {existingProduct.UnitsInStock}");
             }
+            return productToUpdate;
         }
-        public void DeleteProduct(Product product)
+        public Product DeleteProduct(Product product)
         {
             _AllProducts.Remove(product);
+            return product;
             //int productId = product.Id;
 
             //var productToDelete = _AllProducts.FirstOrDefault(p => p.Id == productId);
@@ -222,7 +262,7 @@ namespace OrderManagementSystemServer.Cache
             return _AllUsers;
         }
 
-        public void AddUser(User user)
+        public User AddUser(User user)
         {
             var lastUserId = GetAllUsers().LastOrDefault()?.Id ?? 0;
 
@@ -238,7 +278,9 @@ namespace OrderManagementSystemServer.Cache
             };
 
             _AllUsers.Add(userToAdd);
+            
             SaveData(true);
+            return userToAdd;
         }
 
         //public void LoginUser(User user)
@@ -250,7 +292,7 @@ namespace OrderManagementSystemServer.Cache
         {
             return _AllUsers.FirstOrDefault(u => u.Id == id);
         }
-        public void UpdateUser(User updatedUser)
+        public User UpdateUser(User updatedUser)
         {
             User userToUpdate = GetAllUsers().FirstOrDefault(u => u.Id == updatedUser.Id);
             if (userToUpdate != null)
@@ -263,11 +305,13 @@ namespace OrderManagementSystemServer.Cache
 
                 //MessageBox.Show($"Product Updated: {existingProduct.Id}, {existingProduct.Name}, {existingProduct.Description}, {existingProduct.Category.Name}, {existingProduct.UnitPrice}, {existingProduct.UnitsInStock}");
             }
+            return userToUpdate;
         }
 
-        public void DeleteUser(User user)
+        public User DeleteUser(User user)
         {
             _AllUsers.Remove(user);
+            return user;
         }
 
         //public User GetCurrentUser()
