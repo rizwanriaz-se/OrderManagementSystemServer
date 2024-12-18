@@ -165,6 +165,9 @@ namespace OrderManagementSystemServer
                         break;
                     case Enums.MessageType.Error:
                         break;
+                    case Enums.MessageType.Heartbeat:
+                        responseObject = MessageProcessor.ProcessHeartbeatMessage(requestObject);
+                        break;
                     default:
                         break;
                 }

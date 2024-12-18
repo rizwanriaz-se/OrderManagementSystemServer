@@ -14,6 +14,7 @@ namespace OrderManagementSystemServer
             Order,
             Product,
             User,
+            Heartbeat,
             Error
         }
         public enum MessageAction
@@ -22,6 +23,7 @@ namespace OrderManagementSystemServer
             Update,
             Delete,
             Load,
+            Ping,
             Error
 
         }

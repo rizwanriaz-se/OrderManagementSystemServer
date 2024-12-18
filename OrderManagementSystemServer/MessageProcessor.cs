@@ -518,6 +518,25 @@ namespace OrderManagementSystemServer
             return objResponse;
         }
 
+        public static Classes.Response ProcessHeartbeatMessage(Classes.Request request)
+        {
+            Classes.Response objResponse = null;
+
+            switch (request.MessageAction)
+            {
+                case Enums.MessageAction.Ping:
+                    {
+                        objResponse = new Classes.Response
+                        {
+                            MessageAction = Enums.MessageAction.Ping,
+                            MessageType = Enums.MessageType.Heartbeat,
+                            Data = "PONG"
+                        };
+                        break;
+                    }
+            }
+            return objResponse;
+        }
 
 
 
