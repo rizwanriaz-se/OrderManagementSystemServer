@@ -1,4 +1,5 @@
-﻿using System;
+﻿//using DevExpress.XtraExport.Implementation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Xml;
 using System.Xml.Serialization;
 
 
-namespace OrderManagementSystemServer.Cache.Models
+namespace OrderManagementSystemServer.Repository
 {
     [Serializable]
     //[XmlRoot("Categories")]

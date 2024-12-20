@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Xml;
 using System.ComponentModel;
 
-namespace OrderManagementSystemServer.Cache.Models
+namespace OrderManagementSystemServer.Repository
 {
-
-
-
 
     [Serializable]
     public class User : INotifyPropertyChanged

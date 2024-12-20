@@ -1,4 +1,5 @@
-﻿using System;
+﻿//using DevExpress.XtraExport.Implementation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Linq;
-//using OrderManagementSystemServer.Cache.Models;
+using OrderManagementSystemServer.Repository;
 
-namespace OrderManagementSystemServer.Cache.Models
+namespace OrderManagementSystemServer.Repository
 {
 
-
+    [Serializable]
     public class Product : INotifyPropertyChanged
     {
         private int m_nId;
@@ -20,8 +21,8 @@ namespace OrderManagementSystemServer.Cache.Models
         private string m_stDescription;
         private Category m_Category;
         private byte[] m_Picture;
-        private decimal m_UnitPrice;
-        private int m_nUnitsInStock;
+        private decimal? m_UnitPrice;
+        private int? m_nUnitsInStock;
 
 
         public int Id
@@ -70,7 +71,7 @@ namespace OrderManagementSystemServer.Cache.Models
                 OnPropertyChanged(nameof(Picture));
             }
         }
-        public decimal UnitPrice
+        public decimal? UnitPrice
         {
             get { return m_UnitPrice; }
             set
@@ -79,7 +80,7 @@ namespace OrderManagementSystemServer.Cache.Models
                 OnPropertyChanged(nameof(UnitPrice));
             }
         }
-        public int UnitsInStock
+        public int? UnitsInStock
         {
             get { return m_nUnitsInStock; }
             set
@@ -95,6 +96,7 @@ namespace OrderManagementSystemServer.Cache.Models
 
             return Id == other.Id && Name == other.Name && Description == other.Description && Category == other.Category && UnitsInStock == other.UnitsInStock && UnitPrice == other.UnitPrice;
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

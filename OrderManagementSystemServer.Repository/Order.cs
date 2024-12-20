@@ -1,4 +1,6 @@
-﻿using OrderManagementSystemServer.Cache.Models;
+﻿//using DevExpress.XtraRichEdit.Model.History;
+//using OrderManagementSystem.UIComponents.ViewModels;
+using OrderManagementSystemServer.Repository;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,12 +8,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 //using System.Runtime.Serialization;
 
 
-namespace OrderManagementSystemServer.Cache.Models
+namespace OrderManagementSystemServer.Repository
 {
     [Serializable]
     public class Order : INotifyPropertyChanged
@@ -143,6 +144,7 @@ namespace OrderManagementSystemServer.Cache.Models
 
             return Id == other.Id && User == other.User && OrderDate == other.OrderDate && Status == other.Status && OrderDetails == other.OrderDetails && ShippingAddress == other.ShippingAddress && ShippedDate == other.ShippedDate;
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)

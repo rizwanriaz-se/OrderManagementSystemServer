@@ -1,5 +1,4 @@
-﻿using OrderManagementSystemServer.Cache.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace OrderManagementSystemServer.Cache.Models
+namespace OrderManagementSystemServer.Repository
 {
     [Serializable]
     public class OrderDetail : INotifyPropertyChanged
@@ -53,6 +53,7 @@ namespace OrderManagementSystemServer.Cache.Models
                 OnPropertyChanged(nameof(Quantity));
             }
         }
+
         public override bool Equals(object obj)
         {
             if (obj is not OrderDetail other) return false;

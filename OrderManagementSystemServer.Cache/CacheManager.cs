@@ -1,14 +1,30 @@
-﻿using System.Collections.ObjectModel;
-using OrderManagementSystemServer.Utils;
-using OrderManagementSystemServer.Cache.Models;
-using static OrderManagementSystemServer.Cache.Models.Order;
+﻿//using OrderManagementSystem.Repositories;
+//using OrderManagementSystemServer.Repository;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Reflection.Metadata;
+
+
+//using OrderManagementSystemServer
+
+
+//using OrderManagementSystemServer.Cache.Models;
+//using static OrderManagementSystemServer.Cache.Models.Order;
 using System.Runtime.CompilerServices;
+using Microsoft.VisualBasic;
+using OrderManagementSystemServer.Components.Utils;
+
+//using OrderManagementSystemServer.Components.Utils;
+using OrderManagementSystemServer.Repository;
+using static OrderManagementSystemServer.Repository.Order;
+//using OrderManagementSystem.Repositories;
+//using static OrderManagementSystem.Repositories.Order;
+//using OrderManagementSystemServer.Components.Classes.Constants;
 
 namespace OrderManagementSystemServer.Cache
 {
     public class CacheManager
     {
-
         private static CacheManager m_Instance;
         public ObservableCollection<Category> _AllCategories { get; private set; }
         public ObservableCollection<Order> _AllOrders { get; private set; }
@@ -35,25 +51,30 @@ namespace OrderManagementSystemServer.Cache
             }
         }
 
+        //private static string currentDirectory = Directory.GetCurrentDirectory();
+        //private List<string> currentDirectoryList = currentDirectory.Split(new string[] { "\\bin" }, StringSplitOptions.None).ToList();
+        //private string m_stDataStorePath = $"{Directory.GetCurrentDirectory().Split(new string[] { "\\bin" }, StringSplitOptions.None)[0]}\\..\\OrderManagementSystemServer.Components\\DataStore\\";
+        //private string m_stDataStorePath = "C:\\Users\\rriaz\\source\\repos\\OrderManagementSystemDataStore\\";
+        //Console.WriteLine(m_stDataStorePath);
+        //private strin
 
-        private string m_stDataStorePath = $"{Directory.GetCurrentDirectory().Split(new string[] { "\\bin" }, StringSplitOptions.None)[0]}\\DataStore\\";
 
-        private string m_stUserDataStorePath = "UserDataStore.xml";
-        private string m_stCategoryDataStorePath = "CategoryDataStore.xml";
-        private string m_stProductDataStorePath = "ProductDataStore.xml";
-        private string m_stOrderDataStorePath = "OrderDataStore.xml";
+        //private string m_stUserDataStorePath = "UserDataStore.xml";
+        //private string m_stCategoryDataStorePath = "CategoryDataStore.xml";
+        //private string m_stProductDataStorePath = "ProductDataStore.xml";
+        //private string m_stOrderDataStorePath = "OrderDataStore.xml";
 
         //public ObservableCo
         private CacheManager()
         {
 
-            _AllUsers = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<User>>($"{m_stDataStorePath}{m_stUserDataStorePath}");
+            _AllUsers = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<User>>($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}");
 
-            _AllCategories = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Category>>($"{m_stDataStorePath}{m_stCategoryDataStorePath}");
+            _AllCategories = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Category>>($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}");
 
-            _AllProducts = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Product>>($"{m_stDataStorePath}{m_stProductDataStorePath}");
+            _AllProducts = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Product>>($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}");
 
-            _AllOrders = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Order>>($"{m_stDataStorePath}{m_stOrderDataStorePath}");
+            _AllOrders = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Order>>($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}");
 
 
         }
@@ -62,12 +83,12 @@ namespace OrderManagementSystemServer.Cache
         {
             if (onlyUser is false)
             {
-                CustomXMLSerializer.SerializeToXml($"{m_stDataStorePath}{m_stUserDataStorePath}", _AllUsers);
-                CustomXMLSerializer.SerializeToXml($"{m_stDataStorePath}{m_stCategoryDataStorePath}", _AllCategories);
-                CustomXMLSerializer.SerializeToXml($"{m_stDataStorePath}{m_stProductDataStorePath}", _AllProducts);
-                CustomXMLSerializer.SerializeToXml($"{m_stDataStorePath}{m_stOrderDataStorePath}", _AllOrders);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", _AllUsers);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}", _AllCategories);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}", _AllProducts);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}", _AllOrders);
             }
-            CustomXMLSerializer.SerializeToXml($"{m_stDataStorePath}{m_stUserDataStorePath}", _AllUsers);
+            CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", _AllUsers);
 
         }
 
@@ -117,12 +138,7 @@ namespace OrderManagementSystemServer.Cache
             return category;
 
         }
-        //public void DeleteCategory(Category category, ref string stErrorMsg)
-        //{
-
-        //    _AllCategories.Remove(category);
-
-        //}
+       
         public Category UpdateCategory(Category updatedCategory)
         {
             Category categoryToUpdate = GetAllCategories().FirstOrDefault(c => c.Id == updatedCategory.Id);
@@ -132,7 +148,6 @@ namespace OrderManagementSystemServer.Cache
             categoryToUpdate.Picture = updatedCategory.Picture;
 
             return categoryToUpdate;
-            //MessageBox.Show("Category updated successfully");
         }
         public ObservableCollection<Order> GetAllOrders()
         {
@@ -153,26 +168,16 @@ namespace OrderManagementSystemServer.Cache
                 OrderDate = DateTime.Now,
                 Status = OrderStatus.Pending,
                 OrderDetails = order.OrderDetails,
-                //OrderDetails = ProductRows.Select(row => new OrderDetail
-                //{
-                //    Product = GUIHandler.GetInstance().CacheManager.GetProductByName(row),
-                //    Quantity = row.Quantity
-                //}).ToList(),
-
                 ShippedDate = order.ShippedDate,
                 ShippingAddress = order.ShippingAddress
             };
 
-
-            //order.Id = _AllOrders.Max(o => o.Id) + 1;
             _AllOrders.Add(orderToAdd);
             return orderToAdd;
-            //return order;
         }
         public Order UpdateOrder(Order updatedOrder)
         {
             // Retrieve the existing order with the same ID
-            //var existingOrder = _AllOrders.FirstOrDefault(o => o.Id == updatedOrder.Id);
             Order orderToUpdate = GetAllOrders().FirstOrDefault(o => o.Id == updatedOrder.Id);
 
             if (orderToUpdate != null)
@@ -184,10 +189,6 @@ namespace OrderManagementSystemServer.Cache
                 orderToUpdate.ShippedDate = updatedOrder.ShippedDate;
                 orderToUpdate.ShippingAddress = updatedOrder.ShippingAddress;
                 orderToUpdate.OrderDetails = updatedOrder.OrderDetails;
-
-                //MessageBox.Show($"Order Updated: {existingOrder.Id}, {existingOrder.User.Name}, {existingOrder.OrderDate}, " +
-                //$"{existingOrder.Products.Count} products, {existingOrder.ShippedDate}, {existingOrder.ShippingAddress}");
-
             }
             else
             {
@@ -240,8 +241,6 @@ namespace OrderManagementSystemServer.Cache
                 productToUpdate.Picture = updatedProduct.Picture;
                 productToUpdate.UnitPrice = updatedProduct.UnitPrice;
                 productToUpdate.UnitsInStock = updatedProduct.UnitsInStock;
-
-                //MessageBox.Show($"Product Updated: {existingProduct.Id}, {existingProduct.Name}, {existingProduct.Description}, {existingProduct.Category.Name}, {existingProduct.UnitPrice}, {existingProduct.UnitsInStock}");
             }
             return productToUpdate;
         }
@@ -249,13 +248,6 @@ namespace OrderManagementSystemServer.Cache
         {
             _AllProducts.Remove(product);
             return product;
-            //int productId = product.Id;
-
-            //var productToDelete = _AllProducts.FirstOrDefault(p => p.Id == productId);
-            //if (productToDelete != null)
-            //{
-            //    _AllProducts.Remove(productToDelete);
-            //}
         }
         public ObservableCollection<User> GetAllUsers()
         {
@@ -283,11 +275,6 @@ namespace OrderManagementSystemServer.Cache
             return userToAdd;
         }
 
-        //public void LoginUser(User user)
-        //{
-
-        //}
-
         public User GetUserByID(int id)
         {
             return _AllUsers.FirstOrDefault(u => u.Id == id);
@@ -302,8 +289,6 @@ namespace OrderManagementSystemServer.Cache
                 userToUpdate.Phone = updatedUser.Phone;
                 userToUpdate.Password = updatedUser.Password;
                 userToUpdate.IsAdmin = updatedUser.IsAdmin;
-
-                //MessageBox.Show($"Product Updated: {existingProduct.Id}, {existingProduct.Name}, {existingProduct.Description}, {existingProduct.Category.Name}, {existingProduct.UnitPrice}, {existingProduct.UnitsInStock}");
             }
             return userToUpdate;
         }
@@ -313,15 +298,5 @@ namespace OrderManagementSystemServer.Cache
             _AllUsers.Remove(user);
             return user;
         }
-
-        //public User GetCurrentUser()
-        //{
-        //    return m_CurrentUser;
-        //}
-
-        //public void SetCurrentUser(User user)
-        //{
-        //    m_CurrentUser = user;
-        //}
     }
 }

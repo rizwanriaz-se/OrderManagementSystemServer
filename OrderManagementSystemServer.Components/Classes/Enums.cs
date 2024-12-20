@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OrderManagementSystemServer
+namespace OrderManagementSystemServer.Components.Classes
 {
     public class Enums
     {
