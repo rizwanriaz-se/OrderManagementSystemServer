@@ -21,8 +21,8 @@ namespace OrderManagementSystemServer.Repository
         private string m_stDescription;
         private Category m_Category;
         private byte[] m_Picture;
-        private decimal? m_UnitPrice;
-        private int? m_nUnitsInStock;
+        private decimal m_UnitPrice;
+        private int m_nUnitsInStock;
 
 
         public int Id
@@ -71,7 +71,7 @@ namespace OrderManagementSystemServer.Repository
                 OnPropertyChanged(nameof(Picture));
             }
         }
-        public decimal? UnitPrice
+        public decimal UnitPrice
         {
             get { return m_UnitPrice; }
             set
@@ -80,7 +80,7 @@ namespace OrderManagementSystemServer.Repository
                 OnPropertyChanged(nameof(UnitPrice));
             }
         }
-        public int? UnitsInStock
+        public int UnitsInStock
         {
             get { return m_nUnitsInStock; }
             set
