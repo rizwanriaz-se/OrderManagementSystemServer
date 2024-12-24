@@ -142,7 +142,7 @@ namespace OrderManagementSystemServer.Repository
         {
             if (obj is not Order other) return false;
 
-            return Id == other.Id && User == other.User && OrderDate == other.OrderDate && Status == other.Status && OrderDetails == other.OrderDetails && ShippingAddress == other.ShippingAddress && ShippedDate == other.ShippedDate;
+            return Id == other.Id;
         }
 
 

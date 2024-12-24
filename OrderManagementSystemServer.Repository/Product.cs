@@ -94,7 +94,7 @@ namespace OrderManagementSystemServer.Repository
         {
             if (obj is not Product other) return false;
 
-            return Id == other.Id && Name == other.Name && Description == other.Description && Category == other.Category && UnitsInStock == other.UnitsInStock && UnitPrice == other.UnitPrice;
+            return Convert.ToInt32(Id) == Convert.ToInt32(other.Id);
         }
 
 

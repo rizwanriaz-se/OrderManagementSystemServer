@@ -1,6 +1,7 @@
 ﻿//using OrderManagementSystem.Repositories;
 //using OrderManagementSystemServer.Repository;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection.Metadata;
 
@@ -246,9 +247,21 @@ namespace OrderManagementSystemServer.Cache
         }
         public Product DeleteProduct(Product product)
         {
+            //needs to be optimized, as currently it checks equality first in firstordefault and again in remove
+            //Product productToDelete = _AllProducts.FirstOrDefault(p => p.Equals(product));
             _AllProducts.Remove(product);
+            //if (_AllProducts.Remove(product))
+            //{
+            //    Debug.WriteLine("Product successfully removed.");
+            //}
+            //else
+            //{
+            //    Debug.WriteLine("Failed to remove product. Check Equals and GetHashCode implementation.");
+            //}
+
             return product;
         }
+
         public ObservableCollection<User> GetAllUsers()
         {
             return _AllUsers;

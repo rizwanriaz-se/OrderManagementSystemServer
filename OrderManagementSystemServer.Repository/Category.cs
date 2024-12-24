@@ -69,7 +69,7 @@ namespace OrderManagementSystemServer.Repository
         {
             if (obj is not Category other) return false;
 
-            return Id == other.Id && Name == other.Name && Description == other.Description;
+            return Id == other.Id;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
