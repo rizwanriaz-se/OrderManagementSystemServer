@@ -58,7 +58,7 @@ namespace OrderManagementSystemServer.Repository
         {
             if (obj is not OrderDetail other) return false;
 
-            return Product == other.Product && Quantity == other.Quantity;
+            return Product.Id == other.Product.Id && Quantity == other.Quantity;
         }
 
 
