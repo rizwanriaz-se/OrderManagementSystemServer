@@ -134,9 +134,14 @@ namespace OrderManagementSystemServer.Cache
 
         public Category DeleteCategory(Category category)
         {
-
-            _AllCategories.Remove(category);
-            return category;
+            Category categoryToDelete = _AllCategories.FirstOrDefault(c => c.Id == category.Id);
+            if (categoryToDelete != null)
+            {
+                _AllCategories.Remove(categoryToDelete);
+            }
+            
+            //_AllCategories.Remove(categoryToDelete);
+            return categoryToDelete;
 
         }
        
@@ -199,8 +204,13 @@ namespace OrderManagementSystemServer.Cache
         }
         public Order DeleteOrder(Order order)
         {
-            _AllOrders.Remove(order);
-            return order;
+            Order orderToDelete = _AllOrders.FirstOrDefault(o => o.Id == order.Id);
+            if (orderToDelete != null)
+            {
+                _AllOrders.Remove(orderToDelete);
+            }
+            //_AllOrders.Remove(orderToDelete);
+            return orderToDelete;
         }
         public ObservableCollection<Product> GetAllProducts()
         {
@@ -249,7 +259,12 @@ namespace OrderManagementSystemServer.Cache
         {
             //needs to be optimized, as currently it checks equality first in firstordefault and again in remove
             //Product productToDelete = _AllProducts.FirstOrDefault(p => p.Equals(product));
-            _AllProducts.Remove(product);
+            //_AllProducts.Remove(product);
+            Product productToDelete = _AllProducts.FirstOrDefault(p => p.Id == product.Id);
+            if (productToDelete != null)
+            {
+                _AllProducts.Remove(productToDelete);
+            }
             //if (_AllProducts.Remove(product))
             //{
             //    Debug.WriteLine("Product successfully removed.");
@@ -259,7 +274,7 @@ namespace OrderManagementSystemServer.Cache
             //    Debug.WriteLine("Failed to remove product. Check Equals and GetHashCode implementation.");
             //}
 
-            return product;
+            return productToDelete;
         }
 
         public ObservableCollection<User> GetAllUsers()
@@ -306,10 +321,19 @@ namespace OrderManagementSystemServer.Cache
             return userToUpdate;
         }
 
+        //public User DeleteUser(User user)
+        //{
+        //    _AllUsers.Remove(user);
+        //    return user;
+        //}
         public User DeleteUser(User user)
         {
-            _AllUsers.Remove(user);
-            return user;
+            User userToDelete = _AllUsers.FirstOrDefault(u => u.Id == user.Id);
+            if (userToDelete != null)
+            {
+                _AllUsers.Remove(userToDelete);
+            }
+            return userToDelete;
         }
     }
 }
