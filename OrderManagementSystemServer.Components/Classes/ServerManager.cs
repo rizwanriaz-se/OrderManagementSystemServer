@@ -4,12 +4,19 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using OrderManagementSystemServer.Cache;
+using System.IO;
 
 namespace OrderManagementSystemServer.Components.Classes
 {
     public class ServerManager
     {
         private static CacheManager _cacheManager;
+        private static TcpListener listener;
+        private static CancellationTokenSource cts;
+        private static List<TcpClient> clients = new List<TcpClient>();
+        private static readonly object _lock = new object();
+        private static CancellationToken token;
+        //private static NetworkStream stream;
 
         public async Task Init()
         {
@@ -27,6 +34,7 @@ namespace OrderManagementSystemServer.Components.Classes
             try
             {
                 _cacheManager.SaveData(false);
+                StopServer();
                 Console.WriteLine("Cache data saved successfully.");
             }
             catch (Exception ex)
@@ -41,6 +49,7 @@ namespace OrderManagementSystemServer.Components.Classes
             try
             {
                 _cacheManager.SaveData(false);
+                StopServer();
                 Console.WriteLine("Cache data saved successfully.");
             }
             catch (Exception ex)
@@ -52,51 +61,180 @@ namespace OrderManagementSystemServer.Components.Classes
 
         private static async Task StartServer()
         {
-            TcpListener listener = new TcpListener(IPAddress.Parse(Constants.IPAddress), Constants.Port);
+            cts = new CancellationTokenSource();
+            token = cts.Token;
+
+            listener = new TcpListener(IPAddress.Parse(Constants.IPAddress), Constants.Port);
             listener.Start();
             Console.WriteLine($"Server listening on port {Constants.Port}.");
 
-            while (true)
-            {
-                TcpClient client = await listener.AcceptTcpClientAsync();
-                Console.WriteLine("Client connected.");
-                _ = Task.Run(() => HandleClient(client));
-            }
-        }
-
-        private static async Task HandleClient(TcpClient client)
-        {
-            using var stream = client.GetStream();
-            byte[] buffer = new byte[Constants.BufferSize];
-            string messageBuffer = string.Empty;
-
-            while (true)
+            var client = default(TcpClient);
+            while (!token.IsCancellationRequested)
             {
                 try
                 {
-                    int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                    if (bytesRead == 0) break;
-
-                    // Append newly read data to the buffer
-                    messageBuffer += Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                    // Process the message buffer
-                    while (TryExtractJson(ref messageBuffer, out string jsonMessage))
+                    client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
+                    Console.WriteLine($"Client {client.Client.RemoteEndPoint} connected.");
+                    lock (_lock)
                     {
-                        Console.WriteLine($"Received JSON: {jsonMessage}");
-                        string response = ProcessRequest(jsonMessage);
-                        byte[] responseBytes = Encoding.UTF8.GetBytes(response);
-                        await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
-                        Console.WriteLine($"Sent: {response}");
+                        clients.Add(client);
+                        Console.WriteLine($"Number of clients after adding: {clients.Count}");
+                    }
+                    _ = HandleClient(client);
+                    //_ = HandleClient(clients);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Listener error: {ex.Message}");
+                }
+
+                //if (client == null) return;
+                //Console.WriteLine("Client connected.");
+                //_ = Task.Run(() => HandleClient(client));
+                //_ = HandleClient(client);
+            }
+        }
+
+        //private async void BroadcastClients(string )
+        //{
+
+        //}
+
+        private static async Task HandleClient(TcpClient client)
+        {
+            using (client)
+            {
+                try
+                {
+                    NetworkStream clientStream = client.GetStream();
+                    byte[] buffer = new byte[Constants.BufferSize];
+                    string messageBuffer = string.Empty;
+
+                    while (client.Connected)
+                    {
+
+                        int bytesRead = await clientStream.ReadAsync(buffer, 0, buffer.Length);
+                        if (bytesRead == 0) { client.Close(); break; }
+
+                        // Append newly read data to the buffer
+                        messageBuffer += Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                        // Process the message buffer
+                        while (TryExtractJson(ref messageBuffer, out string jsonMessage))
+                        {
+                            Console.WriteLine($"Received from {client.Client.RemoteEndPoint}: {jsonMessage}");
+                            Response response = ProcessRequest(jsonMessage);
+                            SendResponse(response, clientStream);
+
+
+
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Client handling error: {ex.Message}");
-                    break;
+                    //break;
+                }
+                finally
+                {
+                    lock (_lock) clients.Remove(client);
+                    Console.WriteLine($"Number of clients after removing: {clients.Count}");
+                    Console.WriteLine("Client disconnected.");
                 }
             }
         }
+
+        private static async void SendResponse(Response resp, NetworkStream networkStream)
+        {
+            string jsonResponse = JsonSerializer.Serialize(resp);
+            if (resp.MessageType == Enums.MessageType.Error || resp.MessageType == Enums.MessageType.Heartbeat || resp.MessageAction == Enums.MessageAction.Load)
+            {
+                byte[] responseBytes = Encoding.UTF8.GetBytes(jsonResponse);
+                await networkStream.WriteAsync(responseBytes, 0, responseBytes.Length);
+                Console.WriteLine($"Sent: {jsonResponse}");
+            }
+            else
+            {
+                //BroadcastClients(jsonResponse);
+                lock (_lock)
+                {
+                    foreach (TcpClient client in clients)
+                    {
+                        try
+                        {
+                            if (client.Connected)
+                            {
+                                byte[] responseBytes = Encoding.UTF8.GetBytes(jsonResponse);
+                                client.GetStream().WriteAsync(responseBytes, 0, responseBytes.Length);
+                                Console.WriteLine($"Sent to {client.Client.RemoteEndPoint}: {jsonResponse}\n");
+                            }
+                            else
+                            {
+                                clients.Remove(client);
+                            }
+                        }
+                        catch
+                        {
+                            clients.Remove(client);
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+        public static void StopServer()
+        {
+            cts.Cancel();
+            listener.Stop();
+            lock (_lock)
+            {
+                foreach (var client in clients)
+                {
+                    client.Close();
+                }
+                clients.Clear();
+            }
+            Console.WriteLine("Server stopped.");
+        }
+        //private static async Task HandleClient(TcpClient client)
+        //{
+        //    using var stream = client.GetStream();
+        //    byte[] buffer = new byte[Constants.BufferSize];
+        //    string messageBuffer = string.Empty;
+
+
+        //    using (client)
+        //    {
+
+        //            try
+        //            {
+        //                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+        //                if (bytesRead == 0) client.Close();
+
+        //                // Append newly read data to the buffer
+        //                messageBuffer += Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+        //                // Process the message buffer
+        //                while (TryExtractJson(ref messageBuffer, out string jsonMessage))
+        //                {
+        //                    Console.WriteLine($"Received JSON: {jsonMessage}");
+        //                    string response = ProcessRequest(jsonMessage);
+        //                    byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+        //                    await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
+        //                    Console.WriteLine($"Sent: {response}");
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Console.WriteLine($"Client handling error: {ex.Message}");
+        //                //break;
+        //            }
+
+        //    }
+        //}
 
         private static bool TryExtractJson(ref string buffer, out string json)
         {
@@ -128,20 +266,21 @@ namespace OrderManagementSystemServer.Components.Classes
             return false;
         }
 
-        private static string ProcessRequest(string request)
+        private static Response ProcessRequest(string request)
         {
+            Response responseObject = null;
             try
             {
-                Console.WriteLine($"Processing request: {request}");
+                //Console.WriteLine($"Processing request: {request}");
 
                 Request requestObject = JsonSerializer.Deserialize<Request>(request);
                 if (requestObject == null)
                 {
                     throw new JsonException("Request object is null");
                 }
-                Console.WriteLine($"Parsed request: {requestObject}");
+                //Console.WriteLine($"Parsed request: {requestObject}");
 
-                Response responseObject = null;
+                //Response responseObject = null;
 
                 switch (requestObject.MessageType)
                 {
@@ -165,18 +304,20 @@ namespace OrderManagementSystemServer.Components.Classes
                     default:
                         break;
                 }
-
-                return JsonSerializer.Serialize(responseObject);
+                return responseObject;
+                //return JsonSerializer.Serialize(responseObject);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"JSON Error: {ex.Message}");
-                return JsonSerializer.Serialize(new { Status = "Error", Message = "Invalid JSON" });
+                return responseObject;
+                //return JsonSerializer.Serialize(new { Status = "Error", Message = "Invalid JSON" });
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-                return JsonSerializer.Serialize(new { Status = "Error", Message = "An error occurred" });
+                return responseObject;
+                //return JsonSerializer.Serialize(new { Status = "Error", Message = "An error occurred" });
             }
         }
 
