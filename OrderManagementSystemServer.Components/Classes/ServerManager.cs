@@ -123,8 +123,8 @@ namespace OrderManagementSystemServer.Components.Classes
                         while (TryExtractJson(ref messageBuffer, out string jsonMessage))
                         {
                             Console.WriteLine($"Received from {client.Client.RemoteEndPoint}: {jsonMessage}");
-                            Response response = ProcessRequest(jsonMessage);
-                            SendResponse(response, clientStream);
+                            ProcessRequest(jsonMessage, clientStream);
+                            //SendResponse(response, clientStream);
 
 
 
@@ -266,7 +266,7 @@ namespace OrderManagementSystemServer.Components.Classes
             return false;
         }
 
-        private static Response ProcessRequest(string request)
+        private static void ProcessRequest(string request, NetworkStream networkStream)
         {
             Response responseObject = null;
             try
@@ -304,19 +304,20 @@ namespace OrderManagementSystemServer.Components.Classes
                     default:
                         break;
                 }
-                return responseObject;
+                SendResponse(responseObject, networkStream);
+                //return responseObject;
                 //return JsonSerializer.Serialize(responseObject);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"JSON Error: {ex.Message}");
-                return responseObject;
+                //return responseObject;
                 //return JsonSerializer.Serialize(new { Status = "Error", Message = "Invalid JSON" });
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-                return responseObject;
+                //return responseObject;
                 //return JsonSerializer.Serialize(new { Status = "Error", Message = "An error occurred" });
             }
         }

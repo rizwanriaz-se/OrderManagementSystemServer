@@ -23,7 +23,8 @@ namespace OrderManagementSystemServer.Components.Classes
     {
         public Enums.MessageType MessageType { get; set; }
         public Enums.MessageAction MessageAction { get; set; }
-        public object Data { get; set; }
+        public object? Data { get; set; }
+        public string? Error { get; set; }
     }
 
     public class MessageProcessor
@@ -32,494 +33,335 @@ namespace OrderManagementSystemServer.Components.Classes
 
         public static Response ProcessCategoryMessage(Request request)
         {
-            Response objResponse = null;
-
-            switch (request.MessageAction)
+            try
             {
-                case Enums.MessageAction.Add:
-                    {
-                        try
+                
+                switch (request.MessageAction)
+                {
+                    case Enums.MessageAction.Add:
                         {
                             Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
-                            Category objResponseCategory = _cacheManager.AddCategory(categoryData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Add,
                                 MessageType = Enums.MessageType.Category,
-                                Data = objResponseCategory
-                            };
-
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Category,
-                                Data = null
+                                Data = _cacheManager.AddCategory(categoryData),
+                                Error = null
                             };
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Update:
-                    {
-                        try
+                    case Enums.MessageAction.Update:
                         {
                             Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
-                            Category objResponseCategory = _cacheManager.UpdateCategory(categoryData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Update,
                                 MessageType = Enums.MessageType.Category,
-                                Data = objResponseCategory
+                                Data = _cacheManager.UpdateCategory(categoryData),
+                                Error = null
                             };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Category,
-                                Data = null
-                            };
+
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Delete:
-                    {
-                        try
+                    case Enums.MessageAction.Delete:
                         {
                             Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
-                            Category objResponseCategory = _cacheManager.DeleteCategory(categoryData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Category,
-                                Data = objResponseCategory
+                                Data = _cacheManager.DeleteCategory(categoryData),
+                                Error = null
                             };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Category,
-                                Data = null
-                            };
+
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Load:
-                    {
-                        try
+                    case Enums.MessageAction.Load:
                         {
-                            ObservableCollection<Category> lstCategories = _cacheManager.GetAllCategories();
-
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Load,
                                 MessageType = Enums.MessageType.Category,
-                                Data = lstCategories
+                                Data = _cacheManager.GetAllCategories(),
+                                Error = null
                             };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Category,
-                                Data = null
-                            };
-                        }
 
-                        break;
-                    }
-
-                default:
-                    objResponse = new Response
-                    {
-                        MessageAction = Enums.MessageAction.Load,
-                        MessageType = Enums.MessageType.Category,
-                        Data = null
-                    };
-                    break;
+                        }
+                    default:
+                        return null;
+                }
             }
-            return objResponse;
-
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = Enums.MessageAction.Error,
+                    MessageType = Enums.MessageType.Category,
+                    Data = null,
+                    Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
+                };
+            }
         }
 
         public static Response ProcessOrderMessage(Request request)
         {
-            Response objResponse = null;
-
-            switch (request.MessageAction)
+            try
             {
-                case Enums.MessageAction.Add:
-                    {
-                        try
+                
+                switch (request.MessageAction)
+                {
+                    case Enums.MessageAction.Add:
                         {
                             Order orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
-                            Order objResponseOrder = _cacheManager.AddOrder(orderData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Add,
                                 MessageType = Enums.MessageType.Order,
-                                Data = objResponseOrder
-                            };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Order,
-                                Data = null
+                                Data = _cacheManager.AddOrder(orderData),
+                                Error = null
                             };
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Update:
-                    {
-                        try
+                    case Enums.MessageAction.Update:
                         {
                             Order orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
-                            Order objResponseOrder = _cacheManager.UpdateOrder(orderData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Update,
                                 MessageType = Enums.MessageType.Order,
-                                Data = objResponseOrder
+                                Data = _cacheManager.UpdateOrder(orderData),
+                                Error = null
                             };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Order,
-                                Data = null
-                            };
+
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Delete:
-                    {
-                        try
+                    case Enums.MessageAction.Delete:
                         {
                             Order orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
-                            Order objResponseOrder = _cacheManager.DeleteOrder(orderData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Order,
-                                Data = objResponseOrder
+                                Data = _cacheManager.DeleteOrder(orderData),
+                                Error = null
                             };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Order,
-                                Data = null
-                            };
+
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Load:
-                    {
-                        try
+                    case Enums.MessageAction.Load:
                         {
-                            ObservableCollection<Order> lstOrders = _cacheManager.GetAllOrders();
-
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Load,
                                 MessageType = Enums.MessageType.Order,
-                                Data = lstOrders
+                                Data = _cacheManager.GetAllOrders(),
+                                Error = null
                             };
+
                         }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Order,
-                                Data = null
-                            };
-                        }
-                        break;
-                    }
+                    default:
+                        return null;
+                }
             }
-            return objResponse;
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = Enums.MessageAction.Error,
+                    MessageType = Enums.MessageType.Order,
+                    Data = null,
+                    Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
+                };
+            }
         }
 
         public static Response ProcessProductMessage(Request request)
         {
-            Response objResponse = null;
-
-            switch (request.MessageAction)
+            try
             {
-                case Enums.MessageAction.Add:
-                    {
-                        try
+                
+                switch (request.MessageAction)
+                {
+                    case Enums.MessageAction.Add:
                         {
                             Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
-                            Product objResponseProduct = _cacheManager.AddProduct(productData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Add,
                                 MessageType = Enums.MessageType.Product,
-                                Data = objResponseProduct
-                            };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Product,
-                                Data = null
+                                Data = _cacheManager.AddProduct(productData),
                             };
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Update:
-                    {
-                        try
+                    case Enums.MessageAction.Update:
                         {
                             Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
-                            Product objResponseProduct = _cacheManager.UpdateProduct(productData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Update,
                                 MessageType = Enums.MessageType.Product,
-                                Data = objResponseProduct
-                            };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Product,
-                                Data = null
+                                Data = _cacheManager.UpdateProduct(productData),
                             };
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Delete:
-                    {
-                        try
+                    case Enums.MessageAction.Delete:
                         {
                             Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
-                            Product objResponseProduct = _cacheManager.DeleteProduct(productData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Product,
-                                Data = objResponseProduct
-                            };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Product,
-                                Data = null
+                                Data = _cacheManager.DeleteProduct(productData),
                             };
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Load:
-                    {
-                        try
+                    case Enums.MessageAction.Load:
                         {
-                            ObservableCollection<Product> lstProducts = _cacheManager.GetAllProducts();
-
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Load,
                                 MessageType = Enums.MessageType.Product,
-                                Data = lstProducts
+                                Data = _cacheManager.GetAllProducts(),
                             };
                         }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.Product,
-                                Data = null
-                            };
-                        }
-                        break;
-                    }
+                    default:
+                        return null;
+
+                }
             }
-            return objResponse;
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = Enums.MessageAction.Error,
+                    MessageType = Enums.MessageType.Product,
+                    Data = null,
+                    Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
+                };
+            }
         }
 
         public static Response ProcessUserMessage(Request request)
         {
-            Response objResponse = null;
-
-            switch (request.MessageAction)
+            try
             {
-                case Enums.MessageAction.Add:
-                    {
-                        try
+                
+                switch (request.MessageAction)
+                {
+                    case Enums.MessageAction.Add:
                         {
                             User userData = JsonSerializer.Deserialize<User>(request.Data?.ToString() ?? string.Empty);
-                            User objResponseuser = _cacheManager.AddUser(userData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Add,
                                 MessageType = Enums.MessageType.User,
-                                Data = objResponseuser
+                                Data = _cacheManager.AddUser(userData),
+                                Error = null
                             };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.User,
-                                Data = null
-                            };
+
+
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Update:
-                    {
-                        try
+                    case Enums.MessageAction.Update:
                         {
                             User userData = JsonSerializer.Deserialize<User>(request.Data?.ToString() ?? string.Empty);
-                            User objResponseuser = _cacheManager.UpdateUser(userData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Update,
                                 MessageType = Enums.MessageType.User,
-                                Data = objResponseuser
+                                Data = _cacheManager.UpdateUser(userData),
+                                Error = null
                             };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.User,
-                                Data = null
-                            };
+
+
+
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Delete:
-                    {
-                        try
+                    case Enums.MessageAction.Delete:
                         {
                             User userData = JsonSerializer.Deserialize<User>(request.Data?.ToString() ?? string.Empty);
-                            User objResponseuser = _cacheManager.DeleteUser(userData);
 
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.User,
-                                Data = objResponseuser
+                                Data = _cacheManager.DeleteUser(userData),
+                                Error = null
                             };
-                        }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.User,
-                                Data = null
-                            };
+
+
+
                         }
 
-                        break;
-                    }
-
-                case Enums.MessageAction.Load:
-                    {
-                        try
+                    case Enums.MessageAction.Load:
                         {
-                            ObservableCollection<User> lstUsers = _cacheManager.GetAllUsers();
-
-                            objResponse = new Response
+                            return new Response
                             {
                                 MessageAction = Enums.MessageAction.Load,
                                 MessageType = Enums.MessageType.User,
-                                Data = lstUsers
+                                Data = _cacheManager.GetAllUsers(),
+                                Error = null
                             };
                         }
-                        catch (Exception)
-                        {
-                            objResponse = new Response
-                            {
-                                MessageAction = Enums.MessageAction.Error,
-                                MessageType = Enums.MessageType.User,
-                                Data = null
-                            };
-                        }
-                        break;
-                    }
+                    default:
+                        return null;
+                }
             }
-            return objResponse;
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = Enums.MessageAction.Error,
+                    MessageType = Enums.MessageType.User,
+                    Data = null,
+                    Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
+                };
+            }
+
         }
 
         public static Response ProcessHeartbeatMessage(Request request)
         {
-            Response objResponse = null;
-
-            switch (request.MessageAction)
+            try
             {
-                case Enums.MessageAction.Ping:
-                    {
-                        objResponse = new Response
+                switch (request.MessageAction)
+                {
+                    case Enums.MessageAction.Ping:
                         {
-                            MessageAction = Enums.MessageAction.Ping,
-                            MessageType = Enums.MessageType.Heartbeat,
-                            Data = "PONG"
-                        };
-                        break;
-                    }
+                            return new Response
+                            {
+                                MessageAction = Enums.MessageAction.Ping,
+                                MessageType = Enums.MessageType.Heartbeat,
+                                Data = "PONG",
+                                Error = null
+                            };
+                        }
+                    default:
+                        return null;
+                }
             }
-            return objResponse;
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = Enums.MessageAction.Ping,
+                    MessageType = Enums.MessageType.Heartbeat,
+                    Data = null,
+                    Error = $"Error trying to send heartbeat response: {ex.Message}"
+                };
+            }
+
         }
     }
 }
