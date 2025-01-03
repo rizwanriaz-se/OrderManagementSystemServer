@@ -13,17 +13,6 @@ namespace OrderManagementSystemServer.Repository
     [Serializable]
     public class OrderDetail : INotifyPropertyChanged
     {
-        //private Order m_order;
-
-        //public Order Order
-        //{
-        //    get { return m_order; }
-        //    set
-        //    {
-        //        m_order = value;
-        //        OnPropertyChanged(nameof(Order));
-        //    }
-        //}
 
         private Product m_Product;
 
@@ -57,7 +46,6 @@ namespace OrderManagementSystemServer.Repository
         public override bool Equals(object obj)
         {
             if (obj is not OrderDetail other) return false;
-            //if (Product == null || other.Product == null) return false;
 
             return Product.Id == other.Product.Id && Quantity == other.Quantity;
         }

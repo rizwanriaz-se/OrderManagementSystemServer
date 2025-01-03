@@ -109,5 +109,3 @@ namespace OrderManagementSystemServer.Repository
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }
-
-// todo: add status to user

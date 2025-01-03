@@ -91,15 +91,6 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        //public Dictionary<Product, int> Products {
-        //    get { return m_Products; }
-        //    set
-        //    {
-        //        m_Products = value;
-        //        OnPropertyChanged(nameof(Products));
-        //        OnPropertyChanged(nameof(ProductRows)); // Notify that ProductRows has changed
-        //    }
-        //}
 
         [XmlElement]
         public DateTime? ShippedDate
@@ -122,21 +113,6 @@ namespace OrderManagementSystemServer.Repository
                 OnPropertyChanged(nameof(ShippingAddress));
             }
         }
-
-        // New property to expose Products as a collection
-        //public ObservableCollection<ProductRow> ProductRows
-        //{
-        //    get
-        //    {
-        //        return new ObservableCollection<ProductRow>(
-        //            m_Products?.Select(p => new ProductRow
-        //            {
-        //                SelectedProduct = p.Key,
-        //                Quantity = p.Value
-        //            }) ?? Enumerable.Empty<ProductRow>()
-        //        );
-        //    }
-        //}
 
         public override bool Equals(object obj)
         {

@@ -81,24 +81,13 @@ namespace OrderManagementSystemServer.Components.Classes
                         Console.WriteLine($"Number of clients after adding: {clients.Count}");
                     }
                     _ = HandleClient(client);
-                    //_ = HandleClient(clients);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Listener error: {ex.Message}");
                 }
-
-                //if (client == null) return;
-                //Console.WriteLine("Client connected.");
-                //_ = Task.Run(() => HandleClient(client));
-                //_ = HandleClient(client);
             }
         }
-
-        //private async void BroadcastClients(string )
-        //{
-
-        //}
 
         private static async Task HandleClient(TcpClient client)
         {
@@ -125,9 +114,6 @@ namespace OrderManagementSystemServer.Components.Classes
                             Console.WriteLine($"Received from {client.Client.RemoteEndPoint}: {jsonMessage}");
                             ProcessRequest(jsonMessage, clientStream);
                             //SendResponse(response, clientStream);
-
-
-
                         }
                     }
                 }
@@ -199,42 +185,7 @@ namespace OrderManagementSystemServer.Components.Classes
             }
             Console.WriteLine("Server stopped.");
         }
-        //private static async Task HandleClient(TcpClient client)
-        //{
-        //    using var stream = client.GetStream();
-        //    byte[] buffer = new byte[Constants.BufferSize];
-        //    string messageBuffer = string.Empty;
-
-
-        //    using (client)
-        //    {
-
-        //            try
-        //            {
-        //                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-        //                if (bytesRead == 0) client.Close();
-
-        //                // Append newly read data to the buffer
-        //                messageBuffer += Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-        //                // Process the message buffer
-        //                while (TryExtractJson(ref messageBuffer, out string jsonMessage))
-        //                {
-        //                    Console.WriteLine($"Received JSON: {jsonMessage}");
-        //                    string response = ProcessRequest(jsonMessage);
-        //                    byte[] responseBytes = Encoding.UTF8.GetBytes(response);
-        //                    await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
-        //                    Console.WriteLine($"Sent: {response}");
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                Console.WriteLine($"Client handling error: {ex.Message}");
-        //                //break;
-        //            }
-
-        //    }
-        //}
+        
 
         private static bool TryExtractJson(ref string buffer, out string json)
         {
@@ -271,16 +222,11 @@ namespace OrderManagementSystemServer.Components.Classes
             Response responseObject = null;
             try
             {
-                //Console.WriteLine($"Processing request: {request}");
-
                 Request requestObject = JsonSerializer.Deserialize<Request>(request);
                 if (requestObject == null)
                 {
                     throw new JsonException("Request object is null");
                 }
-                //Console.WriteLine($"Parsed request: {requestObject}");
-
-                //Response responseObject = null;
 
                 switch (requestObject.MessageType)
                 {
@@ -305,20 +251,14 @@ namespace OrderManagementSystemServer.Components.Classes
                         break;
                 }
                 SendResponse(responseObject, networkStream);
-                //return responseObject;
-                //return JsonSerializer.Serialize(responseObject);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"JSON Error: {ex.Message}");
-                //return responseObject;
-                //return JsonSerializer.Serialize(new { Status = "Error", Message = "Invalid JSON" });
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-                //return responseObject;
-                //return JsonSerializer.Serialize(new { Status = "Error", Message = "An error occurred" });
             }
         }
 

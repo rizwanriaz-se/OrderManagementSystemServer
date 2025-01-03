@@ -140,21 +140,15 @@ namespace OrderManagementSystemServer.Cache
         }
         public Category DeleteCategory(Category category)
         {
-
-
-
             Category categoryToDelete = _AllCategories.FirstOrDefault(c => c.Id == category.Id);
 
             if (category == null || categoryToDelete == null)
             {
                 throw new ArgumentNullException(nameof(category), "The category to be deleted is null.");
             }
-            //if (categoryToDelete != null)
-            //{
+            
             _AllCategories.Remove(categoryToDelete);
-            //}
 
-            //_AllCategories.Remove(categoryToDelete);
             return categoryToDelete;
 
         }
@@ -167,8 +161,6 @@ namespace OrderManagementSystemServer.Cache
                 throw new Exception($"No category found with given ID {updatedCategory.Id}");
             }
 
-
-
             categoryToUpdate.Name = updatedCategory.Name;
             categoryToUpdate.Description = updatedCategory.Description;
             categoryToUpdate.Picture = updatedCategory.Picture;
@@ -179,10 +171,7 @@ namespace OrderManagementSystemServer.Cache
         {
             return _AllOrders;
         }
-        //public Order GetOrderById(int id)
-        //{
-        //    return _AllOrders.FirstOrDefault(o => o.Id == id);
-        //}
+        
         public Order AddOrder(Order order)
         {
 
@@ -222,8 +211,6 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(updatedOrder), "The order to be updated is null.");
             }
 
-            //if (orderToUpdate != null)
-            //{
             // Update the existing order's properties
             orderToUpdate.User = updatedOrder.User;
             orderToUpdate.OrderDate = updatedOrder.OrderDate;
@@ -231,11 +218,7 @@ namespace OrderManagementSystemServer.Cache
             orderToUpdate.ShippedDate = updatedOrder.ShippedDate;
             orderToUpdate.ShippingAddress = updatedOrder.ShippingAddress;
             orderToUpdate.OrderDetails = updatedOrder.OrderDetails;
-            //}
-            //else
-            //{
-            //MessageBox.Show("Order not found.");
-            //}
+          
             return orderToUpdate;
         }
         public Order DeleteOrder(Order order)
@@ -247,27 +230,15 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(order), "The order to be deleted is null.");
             }
 
-
-            //if (orderToDelete != null)
-            //{
             _AllOrders.Remove(orderToDelete);
-            //}
-            //_AllOrders.Remove(orderToDelete);
+           
             return orderToDelete;
         }
         public ObservableCollection<Product> GetAllProducts()
         {
             return _AllProducts;
         }
-        //public Product GetProductByID(int id)
-        //{
-
-        //    return _AllProducts.FirstOrDefault(p => p.Id == id);
-        //}
-        //public Product GetProductByName(OrderDetail orderDetail)
-        //{
-        //    return _AllProducts.FirstOrDefault(p => p.Name == orderDetail.Product.Name);
-        //}
+       
         public Product AddProduct(Product product)
         {
 
@@ -309,15 +280,13 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(updatedProduct), "The product to be updated is null.");
             }
 
-            //if (productToUpdate != null)
-            //{
             productToUpdate.Name = updatedProduct.Name;
             productToUpdate.Description = updatedProduct.Description;
             productToUpdate.Category = updatedProduct.Category;
             productToUpdate.Picture = updatedProduct.Picture;
             productToUpdate.UnitPrice = updatedProduct.UnitPrice;
             productToUpdate.UnitsInStock = updatedProduct.UnitsInStock;
-            //}
+
             return productToUpdate;
         }
         public Product DeleteProduct(Product product)
@@ -332,18 +301,7 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(product), "The product to be deleted is null.");
             }
 
-            //if (productToDelete != null)
-            //{
             _AllProducts.Remove(productToDelete);
-            //}
-            //if (_AllProducts.Remove(product))
-            //{
-            //    Debug.WriteLine("Product successfully removed.");
-            //}
-            //else
-            //{
-            //    Debug.WriteLine("Failed to remove product. Check Equals and GetHashCode implementation.");
-            //}
 
             return productToDelete;
         }
@@ -359,10 +317,6 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(user), "The user to be added is null.");
             }
 
-            //if (string.IsNullOrWhiteSpace(user.Name))
-            //{
-            //    throw new ArgumentException("The user name cannot be null or empty.", nameof(user.Name));
-            //}
 
             if (_AllUsers.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
             {
@@ -387,10 +341,7 @@ namespace OrderManagementSystemServer.Cache
             SaveData(true);
             return userToAdd;
         }
-        //public User GetUserByID(int id)
-        //{
-        //    return _AllUsers.FirstOrDefault(u => u.Id == id);
-        //}
+       
         public User UpdateUser(User updatedUser)
         {
             User userToUpdate = GetAllUsers().FirstOrDefault(u => u.Id == updatedUser.Id);
@@ -400,35 +351,25 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(updatedUser), "The user to be updated is null.");
             }
 
-            //if (userToUpdate != null)
-            //{
             userToUpdate.Name = updatedUser.Name;
             userToUpdate.Email = updatedUser.Email;
             userToUpdate.Phone = updatedUser.Phone;
             userToUpdate.Password = updatedUser.Password;
             userToUpdate.IsAdmin = updatedUser.IsAdmin;
-            //}
+            
             return userToUpdate;
         }
-        //public User DeleteUser(User user)
-        //{
-        //    _AllUsers.Remove(user);
-        //    return user;
-        //}
+        
         public User DeleteUser(User user)
         {
-
-
-
             User userToDelete = _AllUsers.FirstOrDefault(u => u.Id == user.Id);
             if (user == null || userToDelete == null)
             {
                 throw new ArgumentNullException(nameof(user), "The user to be deleted is null.");
             }
-            //if (userToDelete != null)
-            //{
+           
             _AllUsers.Remove(userToDelete);
-            //}
+            
             return userToDelete;
         }
     }
