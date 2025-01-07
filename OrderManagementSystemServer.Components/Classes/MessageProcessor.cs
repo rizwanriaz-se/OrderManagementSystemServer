@@ -1,13 +1,7 @@
-﻿//using OrderManagementSystemServer.Cache;
-using System.Text.Json;
-using System.Collections.ObjectModel;
-//using OrderManagementSystem.Repositories;
-//using OrderManagementSystemServer.Repositories;
+﻿using OrderManagementSystemServer.Cache;
 using OrderManagementSystemServer.Repository;
-using OrderManagementSystemServer.Cache;
-//using OrderManagementSystemServer.Repositories;
+using System.Text.Json;
 
-//using OrderManagementSystem.Repositories;
 
 namespace OrderManagementSystemServer.Components.Classes
 {
@@ -35,7 +29,6 @@ namespace OrderManagementSystemServer.Components.Classes
         {
             try
             {
-                
                 switch (request.MessageAction)
                 {
                     case Enums.MessageAction.Add:

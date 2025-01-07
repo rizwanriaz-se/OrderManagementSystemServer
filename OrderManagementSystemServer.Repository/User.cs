@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-//using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using System.Xml.Linq;
-using System.Xml.Serialization;
+﻿using System.ComponentModel;
 using System.Xml;
-using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OrderManagementSystemServer.Repository
 {
@@ -105,6 +98,9 @@ namespace OrderManagementSystemServer.Repository
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ApprovalStatus)));
             }
         }
+
+        //create  a property for user named isDeleted, and if its true dont show it on UI
+
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

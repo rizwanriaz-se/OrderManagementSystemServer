@@ -1,7 +1,4 @@
-﻿//using OrderManagementSystemServer.Classes;
-//using OrderManagementSystemServer.Components;
-
-using OrderManagementSystemServer.Components.Classes;
+﻿using OrderManagementSystemServer.Components.Classes;
 
 namespace OrderManagementSystemServer
 {

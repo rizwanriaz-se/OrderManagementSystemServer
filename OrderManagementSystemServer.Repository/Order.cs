@@ -1,15 +1,6 @@
-﻿//using DevExpress.XtraRichEdit.Model.History;
-//using OrderManagementSystem.UIComponents.ViewModels;
-using OrderManagementSystemServer.Repository;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-//using System.Runtime.Serialization;
 
 
 namespace OrderManagementSystemServer.Repository

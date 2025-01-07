@@ -1,26 +1,23 @@
-﻿//using OrderManagementSystemServer.Cache;
-using System.Net.Sockets;
+﻿using OrderManagementSystemServer.Cache;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
-using OrderManagementSystemServer.Cache;
-using System.IO;
 
 namespace OrderManagementSystemServer.Components.Classes
 {
     public class ServerManager
     {
-        private static CacheManager _cacheManager;
-        private static TcpListener listener;
-        private static CancellationTokenSource cts;
-        private static List<TcpClient> clients = new List<TcpClient>();
-        private static readonly object _lock = new object();
-        private static CancellationToken token;
-        //private static NetworkStream stream;
+        private static CacheManager m_objCacheManager;
+        private static TcpListener m_objListener;
+        private static CancellationTokenSource m_objCts;
+        private static List<TcpClient> m_objClients = new List<TcpClient>();
+        private static readonly object m_objLock = new object();
+        private static CancellationToken m_objToken;
 
         public async Task Init()
         {
-            _cacheManager = CacheManager.Instance;
+            m_objCacheManager = CacheManager.Instance;
 
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             Console.CancelKeyPress += OnCancelKeyPress;
@@ -33,7 +30,7 @@ namespace OrderManagementSystemServer.Components.Classes
         {
             try
             {
-                _cacheManager.SaveData(false);
+                m_objCacheManager.SaveData(false);
                 StopServer();
                 Console.WriteLine("Cache data saved successfully.");
             }
@@ -48,7 +45,7 @@ namespace OrderManagementSystemServer.Components.Classes
         {
             try
             {
-                _cacheManager.SaveData(false);
+                m_objCacheManager.SaveData(false);
                 StopServer();
                 Console.WriteLine("Cache data saved successfully.");
             }
@@ -61,24 +58,24 @@ namespace OrderManagementSystemServer.Components.Classes
 
         private static async Task StartServer()
         {
-            cts = new CancellationTokenSource();
-            token = cts.Token;
+            m_objCts = new CancellationTokenSource();
+            m_objToken = m_objCts.Token;
 
-            listener = new TcpListener(IPAddress.Parse(Constants.IPAddress), Constants.Port);
-            listener.Start();
+            m_objListener = new TcpListener(IPAddress.Parse(Constants.IPAddress), Constants.Port);
+            m_objListener.Start();
             Console.WriteLine($"Server listening on port {Constants.Port}.");
 
-            var client = default(TcpClient);
-            while (!token.IsCancellationRequested)
+            TcpClient? client = default(TcpClient);
+            while (!m_objToken.IsCancellationRequested)
             {
                 try
                 {
-                    client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
+                    client = await m_objListener.AcceptTcpClientAsync().ConfigureAwait(false);
                     Console.WriteLine($"Client {client.Client.RemoteEndPoint} connected.");
-                    lock (_lock)
+                    lock (m_objLock)
                     {
-                        clients.Add(client);
-                        Console.WriteLine($"Number of clients after adding: {clients.Count}");
+                        m_objClients.Add(client);
+                        Console.WriteLine($"Number of clients after adding: {m_objClients.Count}");
                     }
                     _ = HandleClient(client);
                 }
@@ -124,8 +121,8 @@ namespace OrderManagementSystemServer.Components.Classes
                 }
                 finally
                 {
-                    lock (_lock) clients.Remove(client);
-                    Console.WriteLine($"Number of clients after removing: {clients.Count}");
+                    lock (m_objLock) m_objClients.Remove(client);
+                    Console.WriteLine($"Number of clients after removing: {m_objClients.Count}");
                     Console.WriteLine("Client disconnected.");
                 }
             }
@@ -143,9 +140,9 @@ namespace OrderManagementSystemServer.Components.Classes
             else
             {
                 //BroadcastClients(jsonResponse);
-                lock (_lock)
+                lock (m_objLock)
                 {
-                    foreach (TcpClient client in clients)
+                    foreach (TcpClient client in m_objClients)
                     {
                         try
                         {
@@ -157,12 +154,12 @@ namespace OrderManagementSystemServer.Components.Classes
                             }
                             else
                             {
-                                clients.Remove(client);
+                                m_objClients.Remove(client);
                             }
                         }
                         catch
                         {
-                            clients.Remove(client);
+                            m_objClients.Remove(client);
                         }
 
                     }
@@ -173,15 +170,15 @@ namespace OrderManagementSystemServer.Components.Classes
 
         public static void StopServer()
         {
-            cts.Cancel();
-            listener.Stop();
-            lock (_lock)
+            m_objCts.Cancel();
+            m_objListener.Stop();
+            lock (m_objLock)
             {
-                foreach (var client in clients)
+                foreach (var client in m_objClients)
                 {
                     client.Close();
                 }
-                clients.Clear();
+                m_objClients.Clear();
             }
             Console.WriteLine("Server stopped.");
         }

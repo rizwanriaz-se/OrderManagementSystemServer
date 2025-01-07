@@ -1,14 +1,4 @@
-﻿//using DevExpress.XtraExport.Implementation;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Xml.Linq;
-using OrderManagementSystemServer.Repository;
+﻿using System.ComponentModel;
 
 namespace OrderManagementSystemServer.Repository
 {
