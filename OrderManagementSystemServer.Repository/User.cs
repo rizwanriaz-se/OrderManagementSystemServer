@@ -22,6 +22,7 @@ namespace OrderManagementSystemServer.Repository
         private string m_stPhone;
         private string m_stPassword;
         private bool m_bIsAdmin;
+        private bool m_bIsArchived;
         private ApprovalStates m_enApprovalStatus = ApprovalStates.Pending;
 
         [XmlElement]
@@ -85,6 +86,17 @@ namespace OrderManagementSystemServer.Repository
             {
                 m_bIsAdmin = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAdmin)));
+            }
+        }
+
+        [XmlElement]
+        public bool IsArchived
+        {
+            get { return m_bIsArchived; }
+            set
+            {
+                m_bIsArchived = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsArchived)));
             }
         }
 

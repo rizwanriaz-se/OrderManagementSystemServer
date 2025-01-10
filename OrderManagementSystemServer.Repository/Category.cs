@@ -12,7 +12,7 @@ namespace OrderManagementSystemServer.Repository
         private int? m_nId;
         private string? m_stName;
         private string? m_stDescription;
-        private byte[]? m_Picture;
+        //private byte[]? m_Picture;
 
         [XmlElement("Id")]
         public int? Id
@@ -47,23 +47,23 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        [XmlElement("Picture")]
-        public byte[]? Picture
-        {
-            get { return m_Picture; }
-            set
-            {
-                m_Picture = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Picture)));
-            }
-        }
+        //[XmlElement("Picture")]
+        //public byte[]? Picture
+        //{
+        //    get { return m_Picture; }
+        //    set
+        //    {
+        //        m_Picture = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Picture)));
+        //    }
+        //}
 
-        public override bool Equals(object obj)
-        {
-            if (obj is not Category other) return false;
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is not Category other) return false;
 
-            return Id == other.Id;
-        }
+        //    return Id == other.Id;
+        //}
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

@@ -105,12 +105,12 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is not Order other) return false;
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is not Order other) return false;
 
-            return Id == other.Id;
-        }
+        //    return Id == other.Id;
+        //}
 
 
         public event PropertyChangedEventHandler PropertyChanged;

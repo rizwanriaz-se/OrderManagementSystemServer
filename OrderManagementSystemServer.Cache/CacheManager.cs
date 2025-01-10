@@ -86,11 +86,12 @@ namespace OrderManagementSystemServer.Cache
             }
 
             int lastCategoryId = GetAllCategories().LastOrDefault()?.Id ?? 0;
-            Category categoryToAdd = new Category { Id = lastCategoryId + 1, Name = category.Name, Description = category.Description, Picture = category.Picture };
+            Category categoryToAdd = new Category { Id = lastCategoryId + 1, Name = category.Name, Description = category.Description};
 
             objCategories.Add(categoryToAdd);
             return categoryToAdd;
         }
+
         public Category DeleteCategory(Category category)
         {
             Category categoryToDelete = objCategories.FirstOrDefault(c => c.Id == category.Id);
@@ -105,6 +106,7 @@ namespace OrderManagementSystemServer.Cache
             return categoryToDelete;
 
         }
+
         public Category UpdateCategory(Category updatedCategory)
         {
             Category categoryToUpdate = GetAllCategories().FirstOrDefault(c => c.Id == updatedCategory.Id);
@@ -116,7 +118,7 @@ namespace OrderManagementSystemServer.Cache
 
             categoryToUpdate.Name = updatedCategory.Name;
             categoryToUpdate.Description = updatedCategory.Description;
-            categoryToUpdate.Picture = updatedCategory.Picture;
+            //categoryToUpdate.Picture = updatedCategory.Picture;
 
             return categoryToUpdate;
         }
@@ -236,7 +238,7 @@ namespace OrderManagementSystemServer.Cache
             productToUpdate.Name = updatedProduct.Name;
             productToUpdate.Description = updatedProduct.Description;
             productToUpdate.Category = updatedProduct.Category;
-            productToUpdate.Picture = updatedProduct.Picture;
+            //productToUpdate.Picture = updatedProduct.Picture;
             productToUpdate.UnitPrice = updatedProduct.UnitPrice;
             productToUpdate.UnitsInStock = updatedProduct.UnitsInStock;
 
@@ -248,6 +250,7 @@ namespace OrderManagementSystemServer.Cache
             //Product productToDelete = objProducts.FirstOrDefault(p => p.Equals(product));
             //objProducts.Remove(product);
             Product productToDelete = objProducts.FirstOrDefault(p => p.Id == product.Id);
+
 
             if (product == null || productToDelete == null)
             {
@@ -308,6 +311,7 @@ namespace OrderManagementSystemServer.Cache
             userToUpdate.Phone = updatedUser.Phone;
             userToUpdate.Password = PasswordHashUtil.HashPassword(updatedUser.Password);
             userToUpdate.IsAdmin = updatedUser.IsAdmin;
+            userToUpdate.ApprovalStatus = updatedUser.ApprovalStatus;
             
             return userToUpdate;
         }
@@ -320,8 +324,9 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(user), "The user to be deleted is null.");
             }
            
-            objUsers.Remove(userToDelete);
-            
+            //objUsers.Remove(userToDelete);
+            userToDelete.IsArchived = true;
+
             return userToDelete;
         }
     }

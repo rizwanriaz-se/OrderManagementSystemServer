@@ -8,9 +8,9 @@ namespace OrderManagementSystemServer.Components.Classes
 {
     public class ServerManager
     {
-        private static CacheManager m_objCacheManager;
-        private static TcpListener m_objListener;
-        private static CancellationTokenSource m_objCts;
+        private static CacheManager? m_objCacheManager;
+        private static TcpListener? m_objListener;
+        private static CancellationTokenSource? m_objCts;
         private static List<TcpClient> m_objClients = new List<TcpClient>();
         private static readonly object m_objLock = new object();
         private static CancellationToken m_objToken;

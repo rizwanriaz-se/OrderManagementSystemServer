@@ -10,7 +10,7 @@ namespace OrderManagementSystemServer.Repository
         private string m_stName;
         private string m_stDescription;
         private Category m_Category;
-        private byte[] m_Picture;
+        //private byte[] m_Picture;
         private decimal m_UnitPrice;
         private int m_nUnitsInStock;
 
@@ -52,15 +52,15 @@ namespace OrderManagementSystemServer.Repository
                 OnPropertyChanged(nameof(Category));
             }
         }
-        public byte[] Picture
-        {
-            get { return m_Picture; }
-            set
-            {
-                m_Picture = value;
-                OnPropertyChanged(nameof(Picture));
-            }
-        }
+        //public byte[] Picture
+        //{
+        //    get { return m_Picture; }
+        //    set
+        //    {
+        //        m_Picture = value;
+        //        OnPropertyChanged(nameof(Picture));
+        //    }
+        //}
         public decimal UnitPrice
         {
             get { return m_UnitPrice; }
@@ -80,12 +80,12 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is not Product other) return false;
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is not Product other) return false;
 
-            return Convert.ToInt32(Id) == Convert.ToInt32(other.Id);
-        }
+        //    return Convert.ToInt32(Id) == Convert.ToInt32(other.Id);
+        //}
 
 
         public event PropertyChangedEventHandler PropertyChanged;
