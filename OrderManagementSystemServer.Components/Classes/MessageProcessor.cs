@@ -60,13 +60,14 @@ namespace OrderManagementSystemServer.Components.Classes
 
                     case Enums.MessageAction.Delete:
                         {
-                            Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
+                            string categoryId = request.Data.ToString();
+                            //Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Category,
-                                Data = _cacheManager.DeleteCategory(categoryData),
+                                Data = _cacheManager.DeleteCategory(categoryId),
                                 Error = null
                             };
 
@@ -135,13 +136,14 @@ namespace OrderManagementSystemServer.Components.Classes
 
                     case Enums.MessageAction.Delete:
                         {
-                            Order orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
+                            string orderId = request.Data.ToString();
+                            //Order orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Order,
-                                Data = _cacheManager.DeleteOrder(orderData),
+                                Data = _cacheManager.DeleteOrder(orderId),
                                 Error = null
                             };
 
@@ -207,13 +209,14 @@ namespace OrderManagementSystemServer.Components.Classes
 
                     case Enums.MessageAction.Delete:
                         {
-                            Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
+                            string productId = request.Data.ToString();
+                            //Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Product,
-                                Data = _cacheManager.DeleteProduct(productData),
+                                Data = _cacheManager.DeleteProduct(productId),
                             };
                         }
 
@@ -283,13 +286,14 @@ namespace OrderManagementSystemServer.Components.Classes
 
                     case Enums.MessageAction.Delete:
                         {
-                            User userData = JsonSerializer.Deserialize<User>(request.Data?.ToString() ?? string.Empty);
+                            string userId = request.Data.ToString();
+                            //User userData = JsonSerializer.Deserialize<User>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.User,
-                                Data = _cacheManager.DeleteUser(userData),
+                                Data = _cacheManager.DeleteUser(userId),
                                 Error = null
                             };
 

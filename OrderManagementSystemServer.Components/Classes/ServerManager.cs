@@ -165,7 +165,6 @@ namespace OrderManagementSystemServer.Components.Classes
                     }
                 }
             }
-
         }
 
         public static void StopServer()

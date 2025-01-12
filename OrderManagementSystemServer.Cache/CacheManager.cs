@@ -92,20 +92,35 @@ namespace OrderManagementSystemServer.Cache
             return categoryToAdd;
         }
 
-        public Category DeleteCategory(Category category)
+        public int DeleteCategory(string category)
         {
-            Category categoryToDelete = objCategories.FirstOrDefault(c => c.Id == category.Id);
+            int categoryId = Int32.Parse(category);
+            Category categoryToDelete = objCategories.FirstOrDefault(c => c.Id == categoryId);
 
             if (category == null || categoryToDelete == null)
             {
                 throw new ArgumentNullException(nameof(category), "The category to be deleted is null.");
             }
-            
+
             objCategories.Remove(categoryToDelete);
 
-            return categoryToDelete;
+            return categoryId;
 
         }
+        //public Category DeleteCategory(Category category)
+        //{
+        //    Category categoryToDelete = objCategories.FirstOrDefault(c => c.Id == category.Id);
+
+        //    if (category == null || categoryToDelete == null)
+        //    {
+        //        throw new ArgumentNullException(nameof(category), "The category to be deleted is null.");
+        //    }
+            
+        //    objCategories.Remove(categoryToDelete);
+
+        //    return categoryToDelete;
+
+        //}
 
         public Category UpdateCategory(Category updatedCategory)
         {
@@ -118,7 +133,6 @@ namespace OrderManagementSystemServer.Cache
 
             categoryToUpdate.Name = updatedCategory.Name;
             categoryToUpdate.Description = updatedCategory.Description;
-            //categoryToUpdate.Picture = updatedCategory.Picture;
 
             return categoryToUpdate;
         }
@@ -176,9 +190,10 @@ namespace OrderManagementSystemServer.Cache
           
             return orderToUpdate;
         }
-        public Order DeleteOrder(Order order)
+        public int DeleteOrder(string order)
         {
-            Order orderToDelete = objOrders.FirstOrDefault(o => o.Id == order.Id);
+            int orderId = Int32.Parse(order);
+            Order orderToDelete = objOrders.FirstOrDefault(o => o.Id == orderId);
 
             if (order == null || orderToDelete == null)
             {
@@ -187,7 +202,7 @@ namespace OrderManagementSystemServer.Cache
 
             objOrders.Remove(orderToDelete);
            
-            return orderToDelete;
+            return orderId;
         }
         public ObservableCollection<Product> GetAllProducts()
         {
@@ -238,18 +253,15 @@ namespace OrderManagementSystemServer.Cache
             productToUpdate.Name = updatedProduct.Name;
             productToUpdate.Description = updatedProduct.Description;
             productToUpdate.Category = updatedProduct.Category;
-            //productToUpdate.Picture = updatedProduct.Picture;
             productToUpdate.UnitPrice = updatedProduct.UnitPrice;
             productToUpdate.UnitsInStock = updatedProduct.UnitsInStock;
 
             return productToUpdate;
         }
-        public Product DeleteProduct(Product product)
+        public int DeleteProduct(string product)
         {
-            //needs to be optimized, as currently it checks equality first in firstordefault and again in remove
-            //Product productToDelete = objProducts.FirstOrDefault(p => p.Equals(product));
-            //objProducts.Remove(product);
-            Product productToDelete = objProducts.FirstOrDefault(p => p.Id == product.Id);
+            int productId = Int32.Parse(product);
+            Product productToDelete = objProducts.FirstOrDefault(p => p.Id == productId);
 
 
             if (product == null || productToDelete == null)
@@ -259,7 +271,7 @@ namespace OrderManagementSystemServer.Cache
 
             objProducts.Remove(productToDelete);
 
-            return productToDelete;
+            return productId;
         }
         public ObservableCollection<User> GetAllUsers()
         {
@@ -316,9 +328,12 @@ namespace OrderManagementSystemServer.Cache
             return userToUpdate;
         }
         
-        public User DeleteUser(User user)
+        public int DeleteUser(string user)
         {
-            User userToDelete = objUsers.FirstOrDefault(u => u.Id == user.Id);
+
+            int userId = Int32.Parse(user);
+
+            User userToDelete = objUsers.FirstOrDefault(u => u.Id == userId);
             if (user == null || userToDelete == null)
             {
                 throw new ArgumentNullException(nameof(user), "The user to be deleted is null.");
@@ -327,7 +342,7 @@ namespace OrderManagementSystemServer.Cache
             //objUsers.Remove(userToDelete);
             userToDelete.IsArchived = true;
 
-            return userToDelete;
+            return userId;
         }
     }
 }
