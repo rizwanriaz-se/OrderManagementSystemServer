@@ -70,7 +70,7 @@ namespace OrderManagementSystemServer.Components.Classes
             {
                 try
                 {
-                    client = await m_objListener.AcceptTcpClientAsync().ConfigureAwait(false);
+                    client = await m_objListener.AcceptTcpClientAsync();
                     Console.WriteLine($"Client {client.Client.RemoteEndPoint} connected.");
                     lock (m_objLock)
                     {

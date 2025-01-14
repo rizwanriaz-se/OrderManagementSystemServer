@@ -9,9 +9,7 @@
         public const int HeartbeatInterval = 5000;
 
         //XML Directory Path
-        //public const string XMLDirectoryPath = "C:\\Users\\rriaz\\source\\repos\\OrderManagementSystemDataStore\\";
-
-        public const string XMLDirectoryPath = "C:\\Users\\Abbas Diat\\Downloads\\OrderManagementSystemDataStore\\OrderManagementSystemDataStore\\";
+        public const string XMLDirectoryPath = "C:\\Users\\rriaz\\source\\repos\\OrderManagementSystemDataStore\\";
 
         //XML DataStore Paths
         public const string UserDataStoreName = "UserDataStore.xml";

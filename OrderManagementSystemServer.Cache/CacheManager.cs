@@ -9,10 +9,10 @@ namespace OrderManagementSystemServer.Cache
     public class CacheManager
     {
         private static CacheManager m_objInstance;
-        public ObservableCollection<Category> objCategories { get; private set; }
-        public ObservableCollection<Order> objOrders { get; private set; }
-        public ObservableCollection<Product> objProducts { get; private set; }
-        public ObservableCollection<User> objUsers { get; private set; }
+        public ObservableCollection<Category> m_objCategories { get;  set; }
+        public ObservableCollection<Order> m_objOrders { get; set; }
+        public ObservableCollection<Product> m_objProducts { get; set; }
+        public ObservableCollection<User> m_objUsers { get; set; }
 
         private User m_objCurrentUser;
 
@@ -35,13 +35,13 @@ namespace OrderManagementSystemServer.Cache
         private CacheManager()
         {
 
-            objUsers = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<User>>($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}");
+            m_objUsers = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<User>>($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}");
 
-            objCategories = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Category>>($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}");
+            m_objCategories = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Category>>($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}");
 
-            objProducts = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Product>>($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}");
+            m_objProducts = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Product>>($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}");
 
-            objOrders = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Order>>($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}");
+            m_objOrders = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Order>>($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}");
 
 
         }
@@ -50,22 +50,22 @@ namespace OrderManagementSystemServer.Cache
         {
             if (onlyUser is false)
             {
-                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", objUsers);
-                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}", objCategories);
-                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}", objProducts);
-                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}", objOrders);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", m_objUsers);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}", m_objCategories);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}", m_objProducts);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}", m_objOrders);
             }
-            CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", objUsers);
+            CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", m_objUsers);
 
         }
 
         public Category GetCategoryById(int id)
         {
-            return objCategories.FirstOrDefault(c => c.Id == id);
+            return m_objCategories.FirstOrDefault(c => c.Id == id);
         }
         public ObservableCollection<Category> GetAllCategories()
         {
-            return objCategories;
+            return m_objCategories;
         }
         
         public Category AddCategory(Category category)
@@ -80,7 +80,7 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentException("The category name cannot be null or empty.", nameof(category.Name));
             }
 
-            if (objCategories.Any(c => c.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase)))
+            if (m_objCategories.Any(c => c.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException($"A category with the name '{category.Name}' already exists.");
             }
@@ -88,35 +88,35 @@ namespace OrderManagementSystemServer.Cache
             int lastCategoryId = GetAllCategories().LastOrDefault()?.Id ?? 0;
             Category categoryToAdd = new Category { Id = lastCategoryId + 1, Name = category.Name, Description = category.Description};
 
-            objCategories.Add(categoryToAdd);
+            m_objCategories.Add(categoryToAdd);
             return categoryToAdd;
         }
 
         public int DeleteCategory(string category)
         {
             int categoryId = Int32.Parse(category);
-            Category categoryToDelete = objCategories.FirstOrDefault(c => c.Id == categoryId);
+            Category categoryToDelete = m_objCategories.FirstOrDefault(c => c.Id == categoryId);
 
             if (category == null || categoryToDelete == null)
             {
                 throw new ArgumentNullException(nameof(category), "The category to be deleted is null.");
             }
 
-            objCategories.Remove(categoryToDelete);
+            m_objCategories.Remove(categoryToDelete);
 
             return categoryId;
 
         }
         //public Category DeleteCategory(Category category)
         //{
-        //    Category categoryToDelete = objCategories.FirstOrDefault(c => c.Id == category.Id);
+        //    Category categoryToDelete = m_objCategories.FirstOrDefault(c => c.Id == category.Id);
 
         //    if (category == null || categoryToDelete == null)
         //    {
         //        throw new ArgumentNullException(nameof(category), "The category to be deleted is null.");
         //    }
             
-        //    objCategories.Remove(categoryToDelete);
+        //    m_objCategories.Remove(categoryToDelete);
 
         //    return categoryToDelete;
 
@@ -138,7 +138,7 @@ namespace OrderManagementSystemServer.Cache
         }
         public ObservableCollection<Order> GetAllOrders()
         {
-            return objOrders;
+            return m_objOrders;
         }
         
         public Order AddOrder(Order order)
@@ -167,7 +167,7 @@ namespace OrderManagementSystemServer.Cache
                 ShippingAddress = order.ShippingAddress
             };
 
-            objOrders.Add(orderToAdd);
+            m_objOrders.Add(orderToAdd);
             return orderToAdd;
         }
         public Order UpdateOrder(Order updatedOrder)
@@ -193,20 +193,20 @@ namespace OrderManagementSystemServer.Cache
         public int DeleteOrder(string order)
         {
             int orderId = Int32.Parse(order);
-            Order orderToDelete = objOrders.FirstOrDefault(o => o.Id == orderId);
+            Order orderToDelete = m_objOrders.FirstOrDefault(o => o.Id == orderId);
 
             if (order == null || orderToDelete == null)
             {
                 throw new ArgumentNullException(nameof(order), "The order to be deleted is null.");
             }
 
-            objOrders.Remove(orderToDelete);
+            m_objOrders.Remove(orderToDelete);
            
             return orderId;
         }
         public ObservableCollection<Product> GetAllProducts()
         {
-            return objProducts;
+            return m_objProducts;
         }
        
         public Product AddProduct(Product product)
@@ -222,7 +222,7 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentException("The product name cannot be null or empty.", nameof(product.Name));
             }
 
-            if (objProducts.Any(p => p.Name.Equals(product.Name, StringComparison.OrdinalIgnoreCase)))
+            if (m_objProducts.Any(p => p.Name.Equals(product.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException($"A product with the name '{product.Name}' already exists.");
             }
@@ -238,7 +238,7 @@ namespace OrderManagementSystemServer.Cache
                 Description = product.Description,
                 Category = product.Category
             };
-            objProducts.Add(productToAdd);
+            m_objProducts.Add(productToAdd);
             return productToAdd;
         }
         public Product UpdateProduct(Product updatedProduct)
@@ -261,7 +261,7 @@ namespace OrderManagementSystemServer.Cache
         public int DeleteProduct(string product)
         {
             int productId = Int32.Parse(product);
-            Product productToDelete = objProducts.FirstOrDefault(p => p.Id == productId);
+            Product productToDelete = m_objProducts.FirstOrDefault(p => p.Id == productId);
 
 
             if (product == null || productToDelete == null)
@@ -269,13 +269,13 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(product), "The product to be deleted is null.");
             }
 
-            objProducts.Remove(productToDelete);
+            m_objProducts.Remove(productToDelete);
 
             return productId;
         }
         public ObservableCollection<User> GetAllUsers()
         {
-            return objUsers;
+            return m_objUsers;
         }
 
        
@@ -286,7 +286,7 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(user), "The user to be added is null.");
             }
 
-            if (objUsers.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
+            if (m_objUsers.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException($"A user with the email '{user.Email}' already exists.");
             }
@@ -303,7 +303,7 @@ namespace OrderManagementSystemServer.Cache
                 IsAdmin = user.IsAdmin
             };
 
-            objUsers.Add(userToAdd);
+            m_objUsers.Add(userToAdd);
 
             SaveData(true);
             return userToAdd;
@@ -322,6 +322,7 @@ namespace OrderManagementSystemServer.Cache
             userToUpdate.Email = updatedUser.Email;
             userToUpdate.Phone = updatedUser.Phone;
             userToUpdate.Password = PasswordHashUtil.HashPassword(updatedUser.Password);
+            userToUpdate.IsArchived = updatedUser.IsArchived;
             userToUpdate.IsAdmin = updatedUser.IsAdmin;
             userToUpdate.ApprovalStatus = updatedUser.ApprovalStatus;
             
@@ -333,16 +334,16 @@ namespace OrderManagementSystemServer.Cache
 
             int userId = Int32.Parse(user);
 
-            User userToDelete = objUsers.FirstOrDefault(u => u.Id == userId);
+            User userToDelete = m_objUsers.FirstOrDefault(u => u.Id == userId);
             if (user == null || userToDelete == null)
             {
                 throw new ArgumentNullException(nameof(user), "The user to be deleted is null.");
             }
            
-            //objUsers.Remove(userToDelete);
+            //m_objUsers.Remove(userToDelete);
             userToDelete.IsArchived = true;
-
             return userId;
+            //return userToDelete;
         }
     }
 }

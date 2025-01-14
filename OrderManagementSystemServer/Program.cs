@@ -4,11 +4,11 @@ namespace OrderManagementSystemServer
 {
     public class Program
     {
-        public static ServerManager serverManager = new ServerManager();
+        public static ServerManager m_objServerManager = new ServerManager();
 
         public static async Task Main(string[] args)
         {
-            await serverManager.Init();            
+            await m_objServerManager.Init();            
         }
     }
 

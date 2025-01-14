@@ -23,7 +23,6 @@ namespace OrderManagementSystemServer.Components.Classes
 
     public class MessageProcessor
     {
-        private static CacheManager _cacheManager = CacheManager.Instance;
 
         public static Response ProcessCategoryMessage(Request request)
         {
@@ -39,7 +38,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Add,
                                 MessageType = Enums.MessageType.Category,
-                                Data = _cacheManager.AddCategory(categoryData),
+                                Data = CacheManager.Instance.AddCategory(categoryData),
                                 Error = null
                             };
                         }
@@ -52,7 +51,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Update,
                                 MessageType = Enums.MessageType.Category,
-                                Data = _cacheManager.UpdateCategory(categoryData),
+                                Data = CacheManager.Instance.UpdateCategory(categoryData),
                                 Error = null
                             };
 
@@ -67,7 +66,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Category,
-                                Data = _cacheManager.DeleteCategory(categoryId),
+                                Data = CacheManager.Instance.DeleteCategory(categoryId),
                                 Error = null
                             };
 
@@ -79,7 +78,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Load,
                                 MessageType = Enums.MessageType.Category,
-                                Data = _cacheManager.GetAllCategories(),
+                                Data = CacheManager.Instance.GetAllCategories(),
                                 Error = null
                             };
 
@@ -115,7 +114,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Add,
                                 MessageType = Enums.MessageType.Order,
-                                Data = _cacheManager.AddOrder(orderData),
+                                Data = CacheManager.Instance.AddOrder(orderData),
                                 Error = null
                             };
                         }
@@ -128,7 +127,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Update,
                                 MessageType = Enums.MessageType.Order,
-                                Data = _cacheManager.UpdateOrder(orderData),
+                                Data = CacheManager.Instance.UpdateOrder(orderData),
                                 Error = null
                             };
 
@@ -143,7 +142,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Order,
-                                Data = _cacheManager.DeleteOrder(orderId),
+                                Data = CacheManager.Instance.DeleteOrder(orderId),
                                 Error = null
                             };
 
@@ -155,7 +154,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Load,
                                 MessageType = Enums.MessageType.Order,
-                                Data = _cacheManager.GetAllOrders(),
+                                Data = CacheManager.Instance.GetAllOrders(),
                                 Error = null
                             };
 
@@ -191,7 +190,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Add,
                                 MessageType = Enums.MessageType.Product,
-                                Data = _cacheManager.AddProduct(productData),
+                                Data = CacheManager.Instance.AddProduct(productData),
                             };
                         }
 
@@ -203,7 +202,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Update,
                                 MessageType = Enums.MessageType.Product,
-                                Data = _cacheManager.UpdateProduct(productData),
+                                Data = CacheManager.Instance.UpdateProduct(productData),
                             };
                         }
 
@@ -216,7 +215,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.Product,
-                                Data = _cacheManager.DeleteProduct(productId),
+                                Data = CacheManager.Instance.DeleteProduct(productId),
                             };
                         }
 
@@ -226,7 +225,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Load,
                                 MessageType = Enums.MessageType.Product,
-                                Data = _cacheManager.GetAllProducts(),
+                                Data = CacheManager.Instance.GetAllProducts(),
                             };
                         }
                     default:
@@ -261,7 +260,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Add,
                                 MessageType = Enums.MessageType.User,
-                                Data = _cacheManager.AddUser(userData),
+                                Data = CacheManager.Instance.AddUser(userData),
                                 Error = null
                             };
 
@@ -276,7 +275,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Update,
                                 MessageType = Enums.MessageType.User,
-                                Data = _cacheManager.UpdateUser(userData),
+                                Data = CacheManager.Instance.UpdateUser(userData),
                                 Error = null
                             };
 
@@ -293,7 +292,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Delete,
                                 MessageType = Enums.MessageType.User,
-                                Data = _cacheManager.DeleteUser(userId),
+                                Data = CacheManager.Instance.DeleteUser(userId),
                                 Error = null
                             };
 
@@ -307,7 +306,7 @@ namespace OrderManagementSystemServer.Components.Classes
                             {
                                 MessageAction = Enums.MessageAction.Load,
                                 MessageType = Enums.MessageType.User,
-                                Data = _cacheManager.GetAllUsers(),
+                                Data = CacheManager.Instance.GetAllUsers(),
                                 Error = null
                             };
                         }

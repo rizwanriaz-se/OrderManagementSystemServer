@@ -111,7 +111,6 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        //create  a property for user named isDeleted, and if its true dont show it on UI
 
 
         public event PropertyChangedEventHandler PropertyChanged;
