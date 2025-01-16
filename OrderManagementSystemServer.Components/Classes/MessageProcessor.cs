@@ -8,15 +8,15 @@ namespace OrderManagementSystemServer.Components.Classes
 
     public class Request
     {
-        public Enums.MessageType MessageType { get; set; }
-        public Enums.MessageAction MessageAction { get; set; }
+        public MessageType MessageType { get; set; }
+        public MessageAction MessageAction { get; set; }
         public object Data { get; set; }
     }
 
     public class Response
     {
-        public Enums.MessageType MessageType { get; set; }
-        public Enums.MessageAction MessageAction { get; set; }
+        public MessageType MessageType { get; set; }
+        public MessageAction MessageAction { get; set; }
         public object? Data { get; set; }
         public string? Error { get; set; }
     }
@@ -30,55 +30,54 @@ namespace OrderManagementSystemServer.Components.Classes
             {
                 switch (request.MessageAction)
                 {
-                    case Enums.MessageAction.Add:
-                        {
-                            Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
+                    case MessageAction.Add:
+                        {  
+                            Category categoryData = ServerManager.DeserializeJson<Category>(request.Data);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Add,
-                                MessageType = Enums.MessageType.Category,
+                                MessageAction = MessageAction.Add,
+                                MessageType = MessageType.Category,
                                 Data = CacheManager.Instance.AddCategory(categoryData),
                                 Error = null
                             };
                         }
 
-                    case Enums.MessageAction.Update:
+                    case MessageAction.Update:
                         {
-                            Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
+                            Category categoryData = ServerManager.DeserializeJson<Category>(request.Data?.ToString() ?? null);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Update,
-                                MessageType = Enums.MessageType.Category,
+                                MessageAction = MessageAction.Update,
+                                MessageType = MessageType.Category,
                                 Data = CacheManager.Instance.UpdateCategory(categoryData),
                                 Error = null
                             };
 
                         }
 
-                    case Enums.MessageAction.Delete:
+                    case MessageAction.Delete:
                         {
                             string categoryId = request.Data.ToString();
                             //Category categoryData = JsonSerializer.Deserialize<Category>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Delete,
-                                MessageType = Enums.MessageType.Category,
+                                MessageAction = MessageAction.Delete,
+                                MessageType = MessageType.Category,
                                 Data = CacheManager.Instance.DeleteCategory(categoryId),
                                 Error = null
                             };
-
                         }
 
-                    case Enums.MessageAction.Load:
+                    case MessageAction.Load:
                         {
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Load,
-                                MessageType = Enums.MessageType.Category,
-                                Data = CacheManager.Instance.GetAllCategories(),
+                                MessageAction = MessageAction.Load,
+                                MessageType = MessageType.Category,
+                                Data = CacheManager.Instance.Categories,
                                 Error = null
                             };
 
@@ -91,8 +90,8 @@ namespace OrderManagementSystemServer.Components.Classes
             {
                 return new Response
                 {
-                    MessageAction = Enums.MessageAction.Error,
-                    MessageType = Enums.MessageType.Category,
+                    MessageAction = MessageAction.Error,
+                    MessageType = MessageType.Category,
                     Data = null,
                     Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
                 };
@@ -103,58 +102,57 @@ namespace OrderManagementSystemServer.Components.Classes
         {
             try
             {
-                
                 switch (request.MessageAction)
                 {
-                    case Enums.MessageAction.Add:
+                    case MessageAction.Add:
                         {
-                            Order orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
+                            Order orderData = ServerManager.DeserializeJson<Order>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Add,
-                                MessageType = Enums.MessageType.Order,
+                                MessageAction = MessageAction.Add,
+                                MessageType = MessageType.Order,
                                 Data = CacheManager.Instance.AddOrder(orderData),
                                 Error = null
                             };
                         }
-
-                    case Enums.MessageAction.Update:
+                        
+                    case MessageAction.Update:
                         {
-                            Order orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
+                            Order orderData = ServerManager.DeserializeJson<Order>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Update,
-                                MessageType = Enums.MessageType.Order,
+                                MessageAction = MessageAction.Update,
+                                MessageType = MessageType.Order,
                                 Data = CacheManager.Instance.UpdateOrder(orderData),
                                 Error = null
                             };
 
                         }
 
-                    case Enums.MessageAction.Delete:
+                    case MessageAction.Delete:
                         {
                             string orderId = request.Data.ToString();
                             //Order orderData = JsonSerializer.Deserialize<Order>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Delete,
-                                MessageType = Enums.MessageType.Order,
+                                MessageAction = MessageAction.Delete,
+                                MessageType = MessageType.Order,
                                 Data = CacheManager.Instance.DeleteOrder(orderId),
                                 Error = null
                             };
 
                         }
 
-                    case Enums.MessageAction.Load:
+                    case MessageAction.Load:
                         {
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Load,
-                                MessageType = Enums.MessageType.Order,
-                                Data = CacheManager.Instance.GetAllOrders(),
+                                MessageAction = MessageAction.Load,
+                                MessageType = MessageType.Order,
+                                Data = CacheManager.Instance.Orders,
                                 Error = null
                             };
 
@@ -167,8 +165,8 @@ namespace OrderManagementSystemServer.Components.Classes
             {
                 return new Response
                 {
-                    MessageAction = Enums.MessageAction.Error,
-                    MessageType = Enums.MessageType.Order,
+                    MessageAction = MessageAction.Error,
+                    MessageType = MessageType.Order,
                     Data = null,
                     Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
                 };
@@ -182,50 +180,50 @@ namespace OrderManagementSystemServer.Components.Classes
                 
                 switch (request.MessageAction)
                 {
-                    case Enums.MessageAction.Add:
+                    case MessageAction.Add:
                         {
-                            Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
+                            Product productData = ServerManager.DeserializeJson<Product>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Add,
-                                MessageType = Enums.MessageType.Product,
+                                MessageAction = MessageAction.Add,
+                                MessageType = MessageType.Product,
                                 Data = CacheManager.Instance.AddProduct(productData),
                             };
                         }
 
-                    case Enums.MessageAction.Update:
+                    case MessageAction.Update:
                         {
-                            Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
+                            Product productData = ServerManager.DeserializeJson<Product>(request.Data);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Update,
-                                MessageType = Enums.MessageType.Product,
+                                MessageAction = MessageAction.Update,
+                                MessageType = MessageType.Product,
                                 Data = CacheManager.Instance.UpdateProduct(productData),
                             };
                         }
 
-                    case Enums.MessageAction.Delete:
+                    case MessageAction.Delete:
                         {
                             string productId = request.Data.ToString();
                             //Product productData = JsonSerializer.Deserialize<Product>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Delete,
-                                MessageType = Enums.MessageType.Product,
+                                MessageAction = MessageAction.Delete,
+                                MessageType = MessageType.Product,
                                 Data = CacheManager.Instance.DeleteProduct(productId),
                             };
                         }
 
-                    case Enums.MessageAction.Load:
+                    case MessageAction.Load:
                         {
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Load,
-                                MessageType = Enums.MessageType.Product,
-                                Data = CacheManager.Instance.GetAllProducts(),
+                                MessageAction = MessageAction.Load,
+                                MessageType = MessageType.Product,
+                                Data = CacheManager.Instance.Products,
                             };
                         }
                     default:
@@ -237,8 +235,8 @@ namespace OrderManagementSystemServer.Components.Classes
             {
                 return new Response
                 {
-                    MessageAction = Enums.MessageAction.Error,
-                    MessageType = Enums.MessageType.Product,
+                    MessageAction = MessageAction.Error,
+                    MessageType = MessageType.Product,
                     Data = null,
                     Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
                 };
@@ -252,14 +250,14 @@ namespace OrderManagementSystemServer.Components.Classes
                 
                 switch (request.MessageAction)
                 {
-                    case Enums.MessageAction.Add:
+                    case MessageAction.Add:
                         {
-                            User userData = JsonSerializer.Deserialize<User>(request.Data?.ToString() ?? string.Empty);
+                            User userData = ServerManager.DeserializeJson<User>(request.Data);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Add,
-                                MessageType = Enums.MessageType.User,
+                                MessageAction = MessageAction.Add,
+                                MessageType = MessageType.User,
                                 Data = CacheManager.Instance.AddUser(userData),
                                 Error = null
                             };
@@ -267,14 +265,14 @@ namespace OrderManagementSystemServer.Components.Classes
 
                         }
 
-                    case Enums.MessageAction.Update:
+                    case MessageAction.Update:
                         {
-                            User userData = JsonSerializer.Deserialize<User>(request.Data?.ToString() ?? string.Empty);
+                            User userData = ServerManager.DeserializeJson<User>(request.Data);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Update,
-                                MessageType = Enums.MessageType.User,
+                                MessageAction = MessageAction.Update,
+                                MessageType = MessageType.User,
                                 Data = CacheManager.Instance.UpdateUser(userData),
                                 Error = null
                             };
@@ -283,15 +281,15 @@ namespace OrderManagementSystemServer.Components.Classes
 
                         }
 
-                    case Enums.MessageAction.Delete:
+                    case MessageAction.Delete:
                         {
                             string userId = request.Data.ToString();
                             //User userData = JsonSerializer.Deserialize<User>(request.Data?.ToString() ?? string.Empty);
 
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Delete,
-                                MessageType = Enums.MessageType.User,
+                                MessageAction = MessageAction.Delete,
+                                MessageType = MessageType.User,
                                 Data = CacheManager.Instance.DeleteUser(userId),
                                 Error = null
                             };
@@ -300,13 +298,13 @@ namespace OrderManagementSystemServer.Components.Classes
 
                         }
 
-                    case Enums.MessageAction.Load:
+                    case MessageAction.Load:
                         {
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Load,
-                                MessageType = Enums.MessageType.User,
-                                Data = CacheManager.Instance.GetAllUsers(),
+                                MessageAction = MessageAction.Load,
+                                MessageType = MessageType.User,
+                                Data = CacheManager.Instance.Users,
                                 Error = null
                             };
                         }
@@ -318,8 +316,8 @@ namespace OrderManagementSystemServer.Components.Classes
             {
                 return new Response
                 {
-                    MessageAction = Enums.MessageAction.Error,
-                    MessageType = Enums.MessageType.User,
+                    MessageAction = MessageAction.Error,
+                    MessageType = MessageType.User,
                     Data = null,
                     Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
                 };
@@ -333,12 +331,12 @@ namespace OrderManagementSystemServer.Components.Classes
             {
                 switch (request.MessageAction)
                 {
-                    case Enums.MessageAction.Ping:
+                    case MessageAction.Ping:
                         {
                             return new Response
                             {
-                                MessageAction = Enums.MessageAction.Ping,
-                                MessageType = Enums.MessageType.Heartbeat,
+                                MessageAction = MessageAction.Ping,
+                                MessageType = MessageType.Heartbeat,
                                 Data = "PONG",
                                 Error = null
                             };
@@ -351,8 +349,8 @@ namespace OrderManagementSystemServer.Components.Classes
             {
                 return new Response
                 {
-                    MessageAction = Enums.MessageAction.Ping,
-                    MessageType = Enums.MessageType.Heartbeat,
+                    MessageAction = MessageAction.Ping,
+                    MessageType = MessageType.Heartbeat,
                     Data = null,
                     Error = $"Error trying to send heartbeat response: {ex.Message}"
                 };

@@ -1,4 +1,5 @@
 ﻿using OrderManagementSystemServer.Cache;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -6,6 +7,25 @@ using System.Text.Json;
 
 namespace OrderManagementSystemServer.Components.Classes
 {
+    public enum MessageType
+    {
+        Category,
+        Order,
+        Product,
+        User,
+        Heartbeat,
+        Error
+    }
+    public enum MessageAction
+    {
+        Add,
+        Update,
+        Delete,
+        Load,
+        Ping,
+        Error
+    }
+
     public class ServerManager
     {
         private static CacheManager? m_objCacheManager;
@@ -15,9 +35,15 @@ namespace OrderManagementSystemServer.Components.Classes
         private static readonly object m_objLock = new object();
         private static CancellationToken m_objToken;
 
+        public static CacheManager CacheManager
+        {
+            get { return m_objCacheManager; }
+            set { m_objCacheManager = value; }
+        }
+
         public async Task Init()
         {
-            m_objCacheManager = CacheManager.Instance;
+            CacheManager = CacheManager.Instance;
 
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             Console.CancelKeyPress += OnCancelKeyPress;
@@ -30,7 +56,7 @@ namespace OrderManagementSystemServer.Components.Classes
         {
             try
             {
-                m_objCacheManager.SaveData(false);
+                CacheManager.SaveData(false);
                 StopServer();
                 Console.WriteLine("Cache data saved successfully.");
             }
@@ -45,7 +71,7 @@ namespace OrderManagementSystemServer.Components.Classes
         {
             try
             {
-                m_objCacheManager.SaveData(false);
+                CacheManager.SaveData(false);
                 StopServer();
                 Console.WriteLine("Cache data saved successfully.");
             }
@@ -102,10 +128,9 @@ namespace OrderManagementSystemServer.Components.Classes
                         int bytesRead = await clientStream.ReadAsync(buffer, 0, buffer.Length);
                         if (bytesRead == 0) { client.Close(); break; }
 
-                        // Append newly read data to the buffer
                         messageBuffer += Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
-                        // Process the message buffer
+
                         while (TryExtractJson(ref messageBuffer, out string jsonMessage))
                         {
                             Console.WriteLine($"Received from {client.Client.RemoteEndPoint}: {jsonMessage}");
@@ -130,8 +155,8 @@ namespace OrderManagementSystemServer.Components.Classes
 
         private static async void SendResponse(Response resp, NetworkStream networkStream)
         {
-            string jsonResponse = JsonSerializer.Serialize(resp);
-            if (resp.MessageType == Enums.MessageType.Error || resp.MessageType == Enums.MessageType.Heartbeat || resp.MessageAction == Enums.MessageAction.Load)
+            string jsonResponse = SerializeJson(resp);
+            if (resp.MessageType == MessageType.Error || resp.MessageType == MessageType.Heartbeat || resp.MessageAction == MessageAction.Load)
             {
                 byte[] responseBytes = Encoding.UTF8.GetBytes(jsonResponse);
                 await networkStream.WriteAsync(responseBytes, 0, responseBytes.Length);
@@ -139,7 +164,6 @@ namespace OrderManagementSystemServer.Components.Classes
             }
             else
             {
-                //BroadcastClients(jsonResponse);
                 lock (m_objLock)
                 {
                     foreach (TcpClient client in m_objClients)
@@ -218,7 +242,7 @@ namespace OrderManagementSystemServer.Components.Classes
             Response responseObject = null;
             try
             {
-                Request requestObject = JsonSerializer.Deserialize<Request>(request);
+                Request requestObject = DeserializeJson<Request>(request);
                 if (requestObject == null)
                 {
                     throw new JsonException("Request object is null");
@@ -226,21 +250,21 @@ namespace OrderManagementSystemServer.Components.Classes
 
                 switch (requestObject.MessageType)
                 {
-                    case Enums.MessageType.Category:
+                    case MessageType.Category:
                         responseObject = MessageProcessor.ProcessCategoryMessage(requestObject);
                         break;
-                    case Enums.MessageType.Order:
+                    case MessageType.Order:
                         responseObject = MessageProcessor.ProcessOrderMessage(requestObject);
                         break;
-                    case Enums.MessageType.Product:
+                    case MessageType.Product:
                         responseObject = MessageProcessor.ProcessProductMessage(requestObject);
                         break;
-                    case Enums.MessageType.User:
+                    case MessageType.User:
                         responseObject = MessageProcessor.ProcessUserMessage(requestObject);
                         break;
-                    case Enums.MessageType.Error:
+                    case MessageType.Error:
                         break;
-                    case Enums.MessageType.Heartbeat:
+                    case MessageType.Heartbeat:
                         responseObject = MessageProcessor.ProcessHeartbeatMessage(requestObject);
                         break;
                     default:
@@ -257,6 +281,36 @@ namespace OrderManagementSystemServer.Components.Classes
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
-
+        public static string? SerializeJson(Response response)
+        {
+            try
+            {
+                if (response != null)
+                    return JsonSerializer.Serialize(response);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Unexpected error occurred when trying to serialize data.");
+                return null;
+            }
+        }
+        public static T? DeserializeJson<T>(object requestData)
+        {
+            try
+            {
+                string data = requestData.ToString();
+                if (requestData != null || string.IsNullOrEmpty(data))
+                {
+                    return (T)JsonSerializer.Deserialize<T>(data);
+                }
+                return default;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Unexpected error occurred when trying to deserialize data.");
+                return default;
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace OrderManagementSystemServer.Repository
     public class User : INotifyPropertyChanged
     {
 
-        public enum ApprovalStates
+        public enum UserApprovalStates
         {
             Pending,
             Approved,
@@ -23,7 +23,7 @@ namespace OrderManagementSystemServer.Repository
         private string m_stPassword;
         private bool m_bIsAdmin;
         private bool m_bIsArchived;
-        private ApprovalStates m_enApprovalStatus = ApprovalStates.Pending;
+        private UserApprovalStates m_enUserApprovalStatus = UserApprovalStates.Pending;
 
         [XmlElement]
         public int Id
@@ -101,17 +101,15 @@ namespace OrderManagementSystemServer.Repository
         }
 
         [XmlElement]
-        public ApprovalStates ApprovalStatus
+        public UserApprovalStates UserApprovalStatus
         {
-            get { return m_enApprovalStatus; }
+            get { return m_enUserApprovalStatus; }
             set
             {
-                m_enApprovalStatus = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ApprovalStatus)));
+                m_enUserApprovalStatus = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserApprovalStatus)));
             }
         }
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

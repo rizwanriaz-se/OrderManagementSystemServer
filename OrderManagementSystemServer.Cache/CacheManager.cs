@@ -9,10 +9,31 @@ namespace OrderManagementSystemServer.Cache
     public class CacheManager
     {
         private static CacheManager m_objInstance;
-        public ObservableCollection<Category> m_objCategories { get;  set; }
-        public ObservableCollection<Order> m_objOrders { get; set; }
-        public ObservableCollection<Product> m_objProducts { get; set; }
-        public ObservableCollection<User> m_objUsers { get; set; }
+        private ObservableCollection<Category> m_lstCategories;
+        private ObservableCollection<Order> m_lstOrders;
+        private ObservableCollection<Product> m_lstProducts;
+        private ObservableCollection<User> m_lstUsers;
+
+        public ObservableCollection<Category> Categories
+        {
+            get { return m_lstCategories; }
+            set { m_lstCategories = value; }
+        }
+        public ObservableCollection<Order> Orders
+        {
+            get { return m_lstOrders; }
+            set { m_lstOrders = value; }
+        }
+        public ObservableCollection<Product> Products
+        {
+            get { return m_lstProducts; }
+            set { m_lstProducts = value; }
+        }
+        public ObservableCollection<User> Users
+        {
+            get { return m_lstUsers; }
+            set { m_lstUsers = value; }
+        }
 
         private User m_objCurrentUser;
 
@@ -35,13 +56,13 @@ namespace OrderManagementSystemServer.Cache
         private CacheManager()
         {
 
-            m_objUsers = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<User>>($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}");
+            Users = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<User>>($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}");
 
-            m_objCategories = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Category>>($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}");
+            Categories = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Category>>($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}");
 
-            m_objProducts = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Product>>($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}");
+            Products = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Product>>($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}");
 
-            m_objOrders = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Order>>($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}");
+            Orders = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Order>>($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}");
 
 
         }
@@ -50,23 +71,23 @@ namespace OrderManagementSystemServer.Cache
         {
             if (onlyUser is false)
             {
-                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", m_objUsers);
-                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}", m_objCategories);
-                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}", m_objProducts);
-                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}", m_objOrders);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", Users);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.CategoryDataStoreName}", Categories);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}", Products);
+                CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}", Orders);
             }
-            CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", m_objUsers);
+            CustomXMLSerializer.SerializeToXml($"{Constants.XMLDirectoryPath}{Constants.UserDataStoreName}", Users);
 
         }
 
-        public Category GetCategoryById(int id)
-        {
-            return m_objCategories.FirstOrDefault(c => c.Id == id);
-        }
-        public ObservableCollection<Category> GetAllCategories()
-        {
-            return m_objCategories;
-        }
+        //public Category GetCategoryById(int id)
+        //{
+        //    return m_lstCategories.FirstOrDefault(c => c.Id == id);
+        //}
+        //public ObservableCollection<Category> GetAllCategories()
+        //{
+        //    return m_lstCategories;
+        //}
         
         public Category AddCategory(Category category)
         {
@@ -80,51 +101,38 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentException("The category name cannot be null or empty.", nameof(category.Name));
             }
 
-            if (m_objCategories.Any(c => c.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase)))
+            if (Categories.Any(c => c.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException($"A category with the name '{category.Name}' already exists.");
             }
 
-            int lastCategoryId = GetAllCategories().LastOrDefault()?.Id ?? 0;
+            int lastCategoryId = Categories.LastOrDefault()?.Id ?? 0;
             Category categoryToAdd = new Category { Id = lastCategoryId + 1, Name = category.Name, Description = category.Description};
 
-            m_objCategories.Add(categoryToAdd);
+            Categories.Add(categoryToAdd);
             return categoryToAdd;
         }
 
         public int DeleteCategory(string category)
         {
             int categoryId = Int32.Parse(category);
-            Category categoryToDelete = m_objCategories.FirstOrDefault(c => c.Id == categoryId);
+            Category categoryToDelete = Categories.FirstOrDefault(c => c.Id == categoryId);
 
             if (category == null || categoryToDelete == null)
             {
                 throw new ArgumentNullException(nameof(category), "The category to be deleted is null.");
             }
 
-            m_objCategories.Remove(categoryToDelete);
+            Categories.Remove(categoryToDelete);
 
             return categoryId;
 
         }
-        //public Category DeleteCategory(Category category)
-        //{
-        //    Category categoryToDelete = m_objCategories.FirstOrDefault(c => c.Id == category.Id);
-
-        //    if (category == null || categoryToDelete == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(category), "The category to be deleted is null.");
-        //    }
-            
-        //    m_objCategories.Remove(categoryToDelete);
-
-        //    return categoryToDelete;
-
-        //}
+   
 
         public Category UpdateCategory(Category updatedCategory)
         {
-            Category categoryToUpdate = GetAllCategories().FirstOrDefault(c => c.Id == updatedCategory.Id);
+            Category categoryToUpdate = Categories.FirstOrDefault(c => c.Id == updatedCategory.Id);
 
             if (categoryToUpdate is null)
             {
@@ -136,14 +144,13 @@ namespace OrderManagementSystemServer.Cache
 
             return categoryToUpdate;
         }
-        public ObservableCollection<Order> GetAllOrders()
-        {
-            return m_objOrders;
-        }
+        //public ObservableCollection<Order> GetAllOrders()
+        //{
+        //    return m_lstOrders;
+        //}
         
         public Order AddOrder(Order order)
         {
-
             if (order == null)
             {
                 throw new ArgumentNullException(nameof(order), "The order to be added is null.");
@@ -154,7 +161,7 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentException("The user name submitting the order cannot be null or empty.", nameof(order.User.Name));
             }
 
-            var lastOrderId = GetAllOrders().LastOrDefault()?.Id ?? 0;
+            var lastOrderId = Orders.LastOrDefault()?.Id ?? 0;
 
             Order orderToAdd = new Order
             {
@@ -167,13 +174,13 @@ namespace OrderManagementSystemServer.Cache
                 ShippingAddress = order.ShippingAddress
             };
 
-            m_objOrders.Add(orderToAdd);
+            Orders.Add(orderToAdd);
             return orderToAdd;
         }
         public Order UpdateOrder(Order updatedOrder)
         {
             // Retrieve the existing order with the same ID
-            Order orderToUpdate = GetAllOrders().FirstOrDefault(o => o.Id == updatedOrder.Id);
+            Order orderToUpdate = Orders.FirstOrDefault(o => o.Id == updatedOrder.Id);
 
             if (orderToUpdate == null)
             {
@@ -193,20 +200,16 @@ namespace OrderManagementSystemServer.Cache
         public int DeleteOrder(string order)
         {
             int orderId = Int32.Parse(order);
-            Order orderToDelete = m_objOrders.FirstOrDefault(o => o.Id == orderId);
+            Order orderToDelete = Orders.FirstOrDefault(o => o.Id == orderId);
 
             if (order == null || orderToDelete == null)
             {
                 throw new ArgumentNullException(nameof(order), "The order to be deleted is null.");
             }
 
-            m_objOrders.Remove(orderToDelete);
+            Orders.Remove(orderToDelete);
            
             return orderId;
-        }
-        public ObservableCollection<Product> GetAllProducts()
-        {
-            return m_objProducts;
         }
        
         public Product AddProduct(Product product)
@@ -222,12 +225,12 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentException("The product name cannot be null or empty.", nameof(product.Name));
             }
 
-            if (m_objProducts.Any(p => p.Name.Equals(product.Name, StringComparison.OrdinalIgnoreCase)))
+            if (Products.Any(p => p.Name.Equals(product.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException($"A product with the name '{product.Name}' already exists.");
             }
 
-            var lastProductId = GetAllProducts().LastOrDefault()?.Id ?? 0;
+            var lastProductId = Products.LastOrDefault()?.Id ?? 0;
 
             Product productToAdd = new Product
             {
@@ -238,12 +241,12 @@ namespace OrderManagementSystemServer.Cache
                 Description = product.Description,
                 Category = product.Category
             };
-            m_objProducts.Add(productToAdd);
+            Products.Add(productToAdd);
             return productToAdd;
         }
         public Product UpdateProduct(Product updatedProduct)
         {
-            Product productToUpdate = GetAllProducts().FirstOrDefault(p => p.Id == updatedProduct.Id);
+            Product productToUpdate = Products.FirstOrDefault(p => p.Id == updatedProduct.Id);
 
             if (productToUpdate == null)
             {
@@ -261,7 +264,7 @@ namespace OrderManagementSystemServer.Cache
         public int DeleteProduct(string product)
         {
             int productId = Int32.Parse(product);
-            Product productToDelete = m_objProducts.FirstOrDefault(p => p.Id == productId);
+            Product productToDelete = Products.FirstOrDefault(p => p.Id == productId);
 
 
             if (product == null || productToDelete == null)
@@ -269,14 +272,14 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(product), "The product to be deleted is null.");
             }
 
-            m_objProducts.Remove(productToDelete);
+            Products.Remove(productToDelete);
 
             return productId;
         }
-        public ObservableCollection<User> GetAllUsers()
-        {
-            return m_objUsers;
-        }
+        //public ObservableCollection<User> GetAllUsers()
+        //{
+        //    return m_lstUsers;
+        //}
 
        
         public User AddUser(User user)
@@ -286,12 +289,12 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(user), "The user to be added is null.");
             }
 
-            if (m_objUsers.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
+            if (Users.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException($"A user with the email '{user.Email}' already exists.");
             }
 
-            var lastUserId = GetAllUsers().LastOrDefault()?.Id ?? 0;
+            var lastUserId = Users.LastOrDefault()?.Id ?? 0;
            
             User userToAdd = new User
             {
@@ -303,7 +306,7 @@ namespace OrderManagementSystemServer.Cache
                 IsAdmin = user.IsAdmin
             };
 
-            m_objUsers.Add(userToAdd);
+            Users.Add(userToAdd);
 
             SaveData(true);
             return userToAdd;
@@ -311,7 +314,7 @@ namespace OrderManagementSystemServer.Cache
        
         public User UpdateUser(User updatedUser)
         {
-            User userToUpdate = GetAllUsers().FirstOrDefault(u => u.Id == updatedUser.Id);
+            User userToUpdate = Users.FirstOrDefault(u => u.Id == updatedUser.Id);
 
             if (userToUpdate == null)
             {
@@ -324,7 +327,7 @@ namespace OrderManagementSystemServer.Cache
             userToUpdate.Password = PasswordHashUtil.HashPassword(updatedUser.Password);
             userToUpdate.IsArchived = updatedUser.IsArchived;
             userToUpdate.IsAdmin = updatedUser.IsAdmin;
-            userToUpdate.ApprovalStatus = updatedUser.ApprovalStatus;
+            userToUpdate.UserApprovalStatus = updatedUser.UserApprovalStatus;
             
             return userToUpdate;
         }
@@ -334,13 +337,13 @@ namespace OrderManagementSystemServer.Cache
 
             int userId = Int32.Parse(user);
 
-            User userToDelete = m_objUsers.FirstOrDefault(u => u.Id == userId);
+            User userToDelete = Users.FirstOrDefault(u => u.Id == userId);
             if (user == null || userToDelete == null)
             {
                 throw new ArgumentNullException(nameof(user), "The user to be deleted is null.");
             }
            
-            //m_objUsers.Remove(userToDelete);
+            //m_lstUsers.Remove(userToDelete);
             userToDelete.IsArchived = true;
             return userId;
             //return userToDelete;
