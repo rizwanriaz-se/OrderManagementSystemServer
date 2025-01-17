@@ -47,23 +47,7 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        //[XmlElement("Picture")]
-        //public byte[]? Picture
-        //{
-        //    get { return m_Picture; }
-        //    set
-        //    {
-        //        m_Picture = value;
-        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Picture)));
-        //    }
-        //}
-
-        //public override bool Equals(object obj)
-        //{
-        //    if (obj is not Category other) return false;
-
-        //    return Id == other.Id;
-        //}
+       
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

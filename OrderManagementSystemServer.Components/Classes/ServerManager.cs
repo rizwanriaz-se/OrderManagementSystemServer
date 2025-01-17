@@ -1,4 +1,5 @@
 ﻿using OrderManagementSystemServer.Cache;
+using OrderManagementSystemServer.Repository;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -25,17 +26,31 @@ namespace OrderManagementSystemServer.Components.Classes
         Ping,
         Error
     }
+    public class Request
+    {
+        public MessageType MessageType { get; set; }
+        public MessageAction MessageAction { get; set; }
+        public object Data { get; set; }
+    }
+
+    public class Response
+    {
+        public MessageType MessageType { get; set; }
+        public MessageAction MessageAction { get; set; }
+        public object? Data { get; set; }
+        public string? Error { get; set; }
+    }
 
     public class ServerManager
     {
-        private static CacheManager? m_objCacheManager;
-        private static TcpListener? m_objListener;
-        private static CancellationTokenSource? m_objCts;
-        private static List<TcpClient> m_objClients = new List<TcpClient>();
-        private static readonly object m_objLock = new object();
-        private static CancellationToken m_objToken;
+        private CacheManager? m_objCacheManager;
+        private TcpListener? m_objListener;
+        private CancellationTokenSource? m_objCts;
+        private List<TcpClient> m_objClients = new List<TcpClient>();
+        private readonly object m_objLock = new object();
+        private CancellationToken m_objToken;
 
-        public static CacheManager CacheManager
+        public CacheManager CacheManager
         {
             get { return m_objCacheManager; }
             set { m_objCacheManager = value; }
@@ -52,7 +67,7 @@ namespace OrderManagementSystemServer.Components.Classes
             await StartServer();
         }
 
-        private static void OnProcessExit(object? sender, EventArgs e)
+        private void OnProcessExit(object? sender, EventArgs e)
         {
             try
             {
@@ -67,7 +82,7 @@ namespace OrderManagementSystemServer.Components.Classes
 
         }
 
-        private static void OnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
+        private void OnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
         {
             try
             {
@@ -82,7 +97,7 @@ namespace OrderManagementSystemServer.Components.Classes
 
         }
 
-        private static async Task StartServer()
+        private async Task StartServer()
         {
             m_objCts = new CancellationTokenSource();
             m_objToken = m_objCts.Token;
@@ -112,7 +127,7 @@ namespace OrderManagementSystemServer.Components.Classes
             }
         }
 
-        private static async Task HandleClient(TcpClient client)
+        private async Task HandleClient(TcpClient client)
         {
             using (client)
             {
@@ -135,14 +150,12 @@ namespace OrderManagementSystemServer.Components.Classes
                         {
                             Console.WriteLine($"Received from {client.Client.RemoteEndPoint}: {jsonMessage}");
                             ProcessRequest(jsonMessage, clientStream);
-                            //SendResponse(response, clientStream);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Client handling error: {ex.Message}");
-                    //break;
                 }
                 finally
                 {
@@ -153,7 +166,7 @@ namespace OrderManagementSystemServer.Components.Classes
             }
         }
 
-        private static async void SendResponse(Response resp, NetworkStream networkStream)
+        private async void SendResponse(Response resp, NetworkStream networkStream)
         {
             string jsonResponse = SerializeJson(resp);
             if (resp.MessageType == MessageType.Error || resp.MessageType == MessageType.Heartbeat || resp.MessageAction == MessageAction.Load)
@@ -191,13 +204,13 @@ namespace OrderManagementSystemServer.Components.Classes
             }
         }
 
-        public static void StopServer()
+        public void StopServer()
         {
             m_objCts.Cancel();
             m_objListener.Stop();
             lock (m_objLock)
             {
-                foreach (var client in m_objClients)
+                foreach (TcpClient client in m_objClients)
                 {
                     client.Close();
                 }
@@ -205,9 +218,9 @@ namespace OrderManagementSystemServer.Components.Classes
             }
             Console.WriteLine("Server stopped.");
         }
-        
 
-        private static bool TryExtractJson(ref string buffer, out string json)
+
+        private bool TryExtractJson(ref string buffer, out string json)
         {
             json = null;
 
@@ -237,50 +250,52 @@ namespace OrderManagementSystemServer.Components.Classes
             return false;
         }
 
-        private static void ProcessRequest(string request, NetworkStream networkStream)
-        {
-            Response responseObject = null;
-            try
-            {
-                Request requestObject = DeserializeJson<Request>(request);
-                if (requestObject == null)
-                {
-                    throw new JsonException("Request object is null");
-                }
+        //private static void ProcessRequest(string request, NetworkStream networkStream)
+        //{
+        //    Response responseObject = null;
+        //    try
+        //    {
+        //        Request requestObject = DeserializeJson<Request>(request);
+        //        if (requestObject == null)
+        //        {
+        //            throw new JsonException("Request object is null");
+        //        }
 
-                switch (requestObject.MessageType)
-                {
-                    case MessageType.Category:
-                        responseObject = MessageProcessor.ProcessCategoryMessage(requestObject);
-                        break;
-                    case MessageType.Order:
-                        responseObject = MessageProcessor.ProcessOrderMessage(requestObject);
-                        break;
-                    case MessageType.Product:
-                        responseObject = MessageProcessor.ProcessProductMessage(requestObject);
-                        break;
-                    case MessageType.User:
-                        responseObject = MessageProcessor.ProcessUserMessage(requestObject);
-                        break;
-                    case MessageType.Error:
-                        break;
-                    case MessageType.Heartbeat:
-                        responseObject = MessageProcessor.ProcessHeartbeatMessage(requestObject);
-                        break;
-                    default:
-                        break;
-                }
-                SendResponse(responseObject, networkStream);
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"JSON Error: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-        }
+        //        switch (requestObject.MessageType)
+        //        {
+        //            case MessageType.Category:
+        //                responseObject = MessageProcessor.ProcessCategoryMessage(requestObject);
+        //                break;
+        //            case MessageType.Order:
+        //                responseObject = MessageProcessor.ProcessOrderMessage(requestObject);
+        //                break;
+        //            case MessageType.Product:
+        //                responseObject = MessageProcessor.ProcessProductMessage(requestObject);
+        //                break;
+        //            case MessageType.User:
+        //                responseObject = MessageProcessor.ProcessUserMessage(requestObject);
+        //                break;
+        //            case MessageType.Error:
+        //                break;
+        //            case MessageType.Heartbeat:
+        //                responseObject = MessageProcessor.ProcessHeartbeatMessage(requestObject);
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //        SendResponse(responseObject, networkStream);
+        //    }
+        //    catch (JsonException ex)
+        //    {
+        //        Console.WriteLine($"JSON Error: {ex.Message}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error: {ex.Message}");
+        //    }
+        //}
+
+
         public static string? SerializeJson(Response response)
         {
             try
@@ -311,6 +326,372 @@ namespace OrderManagementSystemServer.Components.Classes
                 Console.WriteLine("Unexpected error occurred when trying to deserialize data.");
                 return default;
             }
+        }
+
+
+
+
+        private void ProcessRequest(string request, NetworkStream networkStream)
+        {
+            Response responseObject = null;
+            try
+            {
+                Request requestObject = DeserializeJson<Request>(request);
+                if (requestObject == null)
+                {
+                    throw new JsonException("Request object is null");
+                }
+
+                switch (requestObject.MessageType)
+                {
+                    case MessageType.Category:
+                        responseObject = ProcessCategoryMessage(requestObject);
+                        break;
+                    case MessageType.Order:
+                        responseObject = ProcessOrderMessage(requestObject);
+                        break;
+                    case MessageType.Product:
+                        responseObject = ProcessProductMessage(requestObject);
+                        break;
+                    case MessageType.User:
+                        responseObject = ProcessUserMessage(requestObject);
+                        break;
+                    case MessageType.Error:
+                        break;
+                    case MessageType.Heartbeat:
+                        responseObject = ProcessHeartbeatMessage(requestObject);
+                        break;
+                    default:
+                        break;
+                }
+                SendResponse(responseObject, networkStream);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"JSON Error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        public Response ProcessCategoryMessage(Request request)
+        {
+            try
+            {
+                switch (request.MessageAction)
+                {
+                    case MessageAction.Add:
+                        {
+                            Category categoryData = ServerManager.DeserializeJson<Category>(request.Data);
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Add,
+                                MessageType = MessageType.Category,
+                                Data = CacheManager.Instance.AddCategory(categoryData),
+                                Error = null
+                            };
+                        }
+
+                    case MessageAction.Update:
+                        {
+                            Category categoryData = ServerManager.DeserializeJson<Category>(request.Data?.ToString() ?? null);
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Update,
+                                MessageType = MessageType.Category,
+                                Data = CacheManager.Instance.UpdateCategory(categoryData),
+                                Error = null
+                            };
+
+                        }
+
+                    case MessageAction.Delete:
+                        {
+                            string categoryId = request.Data.ToString();
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Delete,
+                                MessageType = MessageType.Category,
+                                Data = CacheManager.Instance.DeleteCategory(categoryId),
+                                Error = null
+                            };
+                        }
+
+                    case MessageAction.Load:
+                        {
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Load,
+                                MessageType = MessageType.Category,
+                                Data = CacheManager.Instance.Categories,
+                                Error = null
+                            };
+
+                        }
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = MessageAction.Error,
+                    MessageType = MessageType.Category,
+                    Data = null,
+                    Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
+                };
+            }
+        }
+
+        public Response ProcessOrderMessage(Request request)
+        {
+            try
+            {
+                switch (request.MessageAction)
+                {
+                    case MessageAction.Add:
+                        {
+                            Order orderData = ServerManager.DeserializeJson<Order>(request.Data?.ToString() ?? string.Empty);
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Add,
+                                MessageType = MessageType.Order,
+                                Data = CacheManager.Instance.AddOrder(orderData),
+                                Error = null
+                            };
+                        }
+
+                    case MessageAction.Update:
+                        {
+                            Order orderData = ServerManager.DeserializeJson<Order>(request.Data?.ToString() ?? string.Empty);
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Update,
+                                MessageType = MessageType.Order,
+                                Data = CacheManager.Instance.UpdateOrder(orderData),
+                                Error = null
+                            };
+
+                        }
+
+                    case MessageAction.Delete:
+                        {
+                            string orderId = request.Data.ToString();
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Delete,
+                                MessageType = MessageType.Order,
+                                Data = CacheManager.Instance.DeleteOrder(orderId),
+                                Error = null
+                            };
+
+                        }
+
+                    case MessageAction.Load:
+                        {
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Load,
+                                MessageType = MessageType.Order,
+                                Data = CacheManager.Instance.Orders,
+                                Error = null
+                            };
+                        }
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = MessageAction.Error,
+                    MessageType = MessageType.Order,
+                    Data = null,
+                    Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
+                };
+            }
+        }
+
+        public Response ProcessProductMessage(Request request)
+        {
+            try
+            {
+                switch (request.MessageAction)
+                {
+                    case MessageAction.Add:
+                        {
+                            Product productData = ServerManager.DeserializeJson<Product>(request.Data?.ToString() ?? string.Empty);
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Add,
+                                MessageType = MessageType.Product,
+                                Data = CacheManager.Instance.AddProduct(productData),
+                            };
+                        }
+
+                    case MessageAction.Update:
+                        {
+                            Product productData = ServerManager.DeserializeJson<Product>(request.Data);
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Update,
+                                MessageType = MessageType.Product,
+                                Data = CacheManager.Instance.UpdateProduct(productData),
+                            };
+                        }
+
+                    case MessageAction.Delete:
+                        {
+                            string productId = request.Data.ToString();
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Delete,
+                                MessageType = MessageType.Product,
+                                Data = CacheManager.Instance.DeleteProduct(productId),
+                            };
+                        }
+
+                    case MessageAction.Load:
+                        {
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Load,
+                                MessageType = MessageType.Product,
+                                Data = CacheManager.Instance.Products,
+                            };
+                        }
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = MessageAction.Error,
+                    MessageType = MessageType.Product,
+                    Data = null,
+                    Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
+                };
+            }
+        }
+
+        public Response ProcessUserMessage(Request request)
+        {
+            try
+            {
+                switch (request.MessageAction)
+                {
+                    case MessageAction.Add:
+                        {
+                            User userData = ServerManager.DeserializeJson<User>(request.Data);
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Add,
+                                MessageType = MessageType.User,
+                                Data = CacheManager.Instance.AddUser(userData),
+                                Error = null
+                            };
+                        }
+
+                    case MessageAction.Update:
+                        {
+                            User userData = ServerManager.DeserializeJson<User>(request.Data);
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Update,
+                                MessageType = MessageType.User,
+                                Data = CacheManager.Instance.UpdateUser(userData),
+                                Error = null
+                            };
+                        }
+
+                    case MessageAction.Delete:
+                        {
+                            string userId = request.Data.ToString();
+
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Delete,
+                                MessageType = MessageType.User,
+                                Data = CacheManager.Instance.DeleteUser(userId),
+                                Error = null
+                            };
+                        }
+
+                    case MessageAction.Load:
+                        {
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Load,
+                                MessageType = MessageType.User,
+                                Data = CacheManager.Instance.Users,
+                                Error = null
+                            };
+                        }
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = MessageAction.Error,
+                    MessageType = MessageType.User,
+                    Data = null,
+                    Error = $"Error trying to {request.MessageAction} {request.MessageType}: {ex.Message}"
+                };
+            }
+
+        }
+
+        public Response ProcessHeartbeatMessage(Request request)
+        {
+            try
+            {
+                switch (request.MessageAction)
+                {
+                    case MessageAction.Ping:
+                        {
+                            return new Response
+                            {
+                                MessageAction = MessageAction.Ping,
+                                MessageType = MessageType.Heartbeat,
+                                Data = "PONG",
+                                Error = null
+                            };
+                        }
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    MessageAction = MessageAction.Ping,
+                    MessageType = MessageType.Heartbeat,
+                    Data = null,
+                    Error = $"Error trying to send heartbeat response: {ex.Message}"
+                };
+            }
+
         }
     }
 }

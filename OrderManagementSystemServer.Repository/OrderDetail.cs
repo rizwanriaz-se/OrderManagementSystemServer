@@ -37,13 +37,6 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        //public override bool Equals(object obj)
-        //{
-        //    if (obj is not OrderDetail other) return false;
-
-        //    return Product.Id == other.Product.Id && Quantity == other.Quantity;
-        //}
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 

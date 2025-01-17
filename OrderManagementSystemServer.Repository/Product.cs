@@ -80,13 +80,6 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        //public override bool Equals(object obj)
-        //{
-        //    if (obj is not Product other) return false;
-
-        //    return Convert.ToInt32(Id) == Convert.ToInt32(other.Id);
-        //}
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 

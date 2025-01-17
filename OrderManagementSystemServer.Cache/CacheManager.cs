@@ -63,8 +63,6 @@ namespace OrderManagementSystemServer.Cache
             Products = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Product>>($"{Constants.XMLDirectoryPath}{Constants.ProductDataStoreName}");
 
             Orders = CustomXMLSerializer.DeserializeFromXml<ObservableCollection<Order>>($"{Constants.XMLDirectoryPath}{Constants.OrderDataStoreName}");
-
-
         }
 
         public void SaveData(bool onlyUser)
@@ -80,14 +78,6 @@ namespace OrderManagementSystemServer.Cache
 
         }
 
-        //public Category GetCategoryById(int id)
-        //{
-        //    return m_lstCategories.FirstOrDefault(c => c.Id == id);
-        //}
-        //public ObservableCollection<Category> GetAllCategories()
-        //{
-        //    return m_lstCategories;
-        //}
         
         public Category AddCategory(Category category)
         {
@@ -144,11 +134,7 @@ namespace OrderManagementSystemServer.Cache
 
             return categoryToUpdate;
         }
-        //public ObservableCollection<Order> GetAllOrders()
-        //{
-        //    return m_lstOrders;
-        //}
-        
+       
         public Order AddOrder(Order order)
         {
             if (order == null)
@@ -161,7 +147,7 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentException("The user name submitting the order cannot be null or empty.", nameof(order.User.Name));
             }
 
-            var lastOrderId = Orders.LastOrDefault()?.Id ?? 0;
+            int lastOrderId = Orders.LastOrDefault()?.Id ?? 0;
 
             Order orderToAdd = new Order
             {
@@ -187,7 +173,6 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(updatedOrder), "The order to be updated is null.");
             }
 
-            // Update the existing order's properties
             orderToUpdate.User = updatedOrder.User;
             orderToUpdate.OrderDate = updatedOrder.OrderDate;
             orderToUpdate.Status = updatedOrder.Status;
@@ -214,7 +199,6 @@ namespace OrderManagementSystemServer.Cache
        
         public Product AddProduct(Product product)
         {
-
             if (product == null)
             {
                 throw new ArgumentNullException(nameof(product), "The product to be added is null.");
@@ -230,7 +214,7 @@ namespace OrderManagementSystemServer.Cache
                 throw new InvalidOperationException($"A product with the name '{product.Name}' already exists.");
             }
 
-            var lastProductId = Products.LastOrDefault()?.Id ?? 0;
+            int lastProductId = Products.LastOrDefault()?.Id ?? 0;
 
             Product productToAdd = new Product
             {
@@ -276,11 +260,6 @@ namespace OrderManagementSystemServer.Cache
 
             return productId;
         }
-        //public ObservableCollection<User> GetAllUsers()
-        //{
-        //    return m_lstUsers;
-        //}
-
        
         public User AddUser(User user)
         {
@@ -294,7 +273,7 @@ namespace OrderManagementSystemServer.Cache
                 throw new InvalidOperationException($"A user with the email '{user.Email}' already exists.");
             }
 
-            var lastUserId = Users.LastOrDefault()?.Id ?? 0;
+            int lastUserId = Users.LastOrDefault()?.Id ?? 0;
            
             User userToAdd = new User
             {
@@ -343,10 +322,8 @@ namespace OrderManagementSystemServer.Cache
                 throw new ArgumentNullException(nameof(user), "The user to be deleted is null.");
             }
            
-            //m_lstUsers.Remove(userToDelete);
             userToDelete.IsArchived = true;
             return userId;
-            //return userToDelete;
         }
     }
 }

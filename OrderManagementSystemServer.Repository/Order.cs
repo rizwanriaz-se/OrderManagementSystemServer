@@ -68,16 +68,16 @@ namespace OrderManagementSystemServer.Repository
             }
         }
 
-        private ObservableCollection<OrderDetail> m_OrderDetails;
+        private ObservableCollection<OrderDetail> m_lstOrderDetails;
 
         [XmlArray("OrderDetails")] // Matches the XML tag
         [XmlArrayItem("OrderDetail")] // Matches individual elements
         public ObservableCollection<OrderDetail> OrderDetails
         {
-            get { return m_OrderDetails; }
+            get { return m_lstOrderDetails; }
             set
             {
-                m_OrderDetails = value;
+                m_lstOrderDetails = value;
                 OnPropertyChanged(nameof(OrderDetails));
             }
         }
@@ -104,13 +104,6 @@ namespace OrderManagementSystemServer.Repository
                 OnPropertyChanged(nameof(ShippingAddress));
             }
         }
-
-        //public override bool Equals(object obj)
-        //{
-        //    if (obj is not Order other) return false;
-
-        //    return Id == other.Id;
-        //}
 
 
         public event PropertyChangedEventHandler PropertyChanged;
